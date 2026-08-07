@@ -131,3 +131,7 @@ export const tasks: Task[] = [
 export function getTasksByAssigneeId(assigneeId: string): Task[] {
   return tasks.filter((task) => task.assigneeId === assigneeId)
 }
+
+export function getTaskById(id: string): Task | undefined {
+  return tasks.find((task) => task.id === id)
+}

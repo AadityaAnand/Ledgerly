@@ -53,6 +53,12 @@ const messagesRoute = createRoute({
   component: MessagesPage,
 })
 
+const messageThreadRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/messages/$conversationId',
+  component: MessagesPage,
+})
+
 const clientsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/clients',
@@ -84,6 +90,7 @@ const routeTree = rootRoute.addChildren([
   documentsRoute,
   tasksRoute,
   messagesRoute,
+  messageThreadRoute,
   clientsRoute,
   aiReviewRoute,
   reportsRoute,

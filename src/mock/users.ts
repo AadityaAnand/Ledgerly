@@ -73,6 +73,42 @@ export const users: User[] = [
     organizationId: 'org_1',
     initials: 'MT',
   },
+  {
+    id: 'usr_9',
+    name: 'David Kessler',
+    email: 'david@kesslermfg.com',
+    role: 'client',
+    title: 'Owner, Kessler Manufacturing Co.',
+    organizationId: 'org_1',
+    initials: 'DK',
+  },
+  {
+    id: 'usr_10',
+    name: 'Renata Ford',
+    email: 'owner@unionstreetbakery.com',
+    role: 'client',
+    title: 'Owner, Union Street Bakery LLC',
+    organizationId: 'org_1',
+    initials: 'RF',
+  },
+  {
+    id: 'usr_11',
+    name: 'Elena Voss',
+    email: 'finance@harlowvosslegal.com',
+    role: 'client',
+    title: 'Partner, Harlow & Voss Legal',
+    organizationId: 'org_1',
+    initials: 'EV',
+  },
+  {
+    id: 'usr_12',
+    name: 'Robert Álvarez',
+    email: 'robert.alvarez@proton.me',
+    role: 'client',
+    title: 'Client',
+    organizationId: 'org_1',
+    initials: 'RA',
+  },
 ]
 
 /** The signed-in user for this session — no auth, so we just fix it. */

@@ -176,3 +176,7 @@ export function getDocumentsByClientId(clientId: string): Document[] {
 export function getDocumentsByReturnId(returnId: string): Document[] {
   return documents.filter((doc) => doc.returnId === returnId)
 }
+
+export function getDocumentById(id: string): Document | undefined {
+  return documents.find((doc) => doc.id === id)
+}

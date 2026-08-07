@@ -1,5 +1,8 @@
 import type {
+  ApprovalStatus,
   ConfidenceLevel,
+  ConversationCategory,
+  DocumentRequestStatus,
   DocumentStatus,
   ReturnStatus,
   TaskPriority,
@@ -76,3 +79,25 @@ export const confidenceLevelMeta: Record<ConfidenceLevel, StatusMeta> = {
   medium: { label: 'Medium confidence', tone: 'warning' },
   low: { label: 'Low confidence', tone: 'danger' },
 }
+
+export const conversationCategoryMeta: Record<ConversationCategory, StatusMeta> = {
+  needs_attention: { label: 'Needs My Attention', tone: 'warning' },
+  waiting_on_client: { label: 'Waiting on Client', tone: 'ai' },
+  internal_review: { label: 'Internal Review', tone: 'primary' },
+  completed: { label: 'Completed', tone: 'success' },
+}
+
+export const documentRequestStatusMeta: Record<DocumentRequestStatus, StatusMeta> = {
+  waiting_on_client: { label: 'Waiting on Client', tone: 'ai' },
+  received: { label: 'Received', tone: 'success' },
+  overdue: { label: 'Overdue', tone: 'danger' },
+}
+
+export const approvalStatusMeta: Record<ApprovalStatus, StatusMeta> = {
+  pending: { label: 'Pending approval', tone: 'warning' },
+  approved: { label: 'Approved', tone: 'success' },
+  rejected: { label: 'Rejected', tone: 'danger' },
+}
+
+/** ConversationPriority shares the exact same union as TaskPriority — reuse
+ * `taskPriorityMeta` for conversation priority badges rather than duplicating it. */
