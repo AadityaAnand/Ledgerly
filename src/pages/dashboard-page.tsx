@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { CheckSquare, Clock, FileText, MessageSquare, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -71,6 +72,7 @@ const returnColumns: LegacyColumnDef<TaxReturn, unknown>[] = [
 ]
 
 export function DashboardPage() {
+  const navigate = useNavigate()
   const firstName = currentUser.name.split(' ')[0]
 
   const activeReturns = useMemo(
@@ -121,15 +123,27 @@ export function DashboardPage() {
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
       >
         <MetricCard label="Active returns" value={String(activeReturns.length)} icon={FileText} />
-        <MetricCard label={`Due within ${DUE_SOON_WINDOW_DAYS} days`} value={String(dueSoon.length)} icon={Clock} />
+        <MetricCard
+          label={`Due within ${DUE_SOON_WINDOW_DAYS} days`}
+          value={String(dueSoon.length)}
+          icon={Clock}
+        />
         <MetricCard label="Open AI flags" value={String(openFlags.length)} icon={Sparkles} />
         <MetricCard label="Unread messages" value={String(unreadMessages)} icon={MessageSquare} />
       </motion.div>
 
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
         <div className="flex flex-col gap-4 xl:col-span-2">
-          <SectionHeader title="Returns needing attention" description="In review or waiting on the client" />
-          <DataGrid columns={returnColumns} data={needsAttention} pageSize={5} />
+          <SectionHeader
+            title="Returns needing attention"
+            description="In review or waiting on the client — click a row to open the traceability review"
+          />
+          <DataGrid
+            columns={returnColumns}
+            data={needsAttention}
+            pageSize={5}
+            onRowClick={(row) => void navigate({ to: '/returns/$returnId', params: { returnId: row.id } })}
+          />
         </div>
 
         <div className="flex flex-col gap-4">

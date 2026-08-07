@@ -1,4 +1,12 @@
-import type { DocumentStatus, ReturnStatus, TaskPriority, TaskStatus } from '@/types'
+import type {
+  ConfidenceLevel,
+  DocumentStatus,
+  ReturnStatus,
+  TaskPriority,
+  TaskStatus,
+  TraceCategory,
+  VerificationStatus,
+} from '@/types'
 
 export type Tone = 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'ai'
 
@@ -38,4 +46,33 @@ export const documentStatusMeta: Record<DocumentStatus, StatusMeta> = {
   processing: { label: 'Processing', tone: 'ai' },
   verified: { label: 'Verified', tone: 'success' },
   flagged: { label: 'Flagged', tone: 'warning' },
+}
+
+export const verificationStatusMeta: Record<VerificationStatus, StatusMeta> = {
+  verified: { label: 'Verified', tone: 'success' },
+  needs_review: { label: 'Needs review', tone: 'warning' },
+  flagged: { label: 'Flagged', tone: 'danger' },
+  overridden: { label: 'Manually overridden', tone: 'primary' },
+  rejected: { label: 'Rejected', tone: 'danger' },
+  unverified: { label: 'Unverified', tone: 'neutral' },
+}
+
+export const traceCategoryLabels: Record<TraceCategory, string> = {
+  income: 'Income',
+  deductions: 'Deductions',
+  payments_credits: 'Payments & Credits',
+  tax_summary: 'Tax Summary',
+}
+
+/** Derived, not stored — keeps the confidence badge always in sync with the score. */
+export function getConfidenceLevel(score: number): ConfidenceLevel {
+  if (score >= 85) return 'high'
+  if (score >= 60) return 'medium'
+  return 'low'
+}
+
+export const confidenceLevelMeta: Record<ConfidenceLevel, StatusMeta> = {
+  high: { label: 'High confidence', tone: 'success' },
+  medium: { label: 'Medium confidence', tone: 'warning' },
+  low: { label: 'Low confidence', tone: 'danger' },
 }

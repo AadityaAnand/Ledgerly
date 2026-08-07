@@ -21,11 +21,17 @@ export function SplitLayout({
 }: SplitLayoutProps) {
   return (
     <ResizablePanelGroup orientation="horizontal" className="h-full">
-      <ResizablePanel defaultSize={100 - defaultSideSize} minSize={100 - maxSideSize}>
+      {/* react-resizable-panels reads bare numbers as pixels — sizes must be
+       * passed as strings to be treated as percentages. */}
+      <ResizablePanel defaultSize={String(100 - defaultSideSize)} minSize={String(100 - maxSideSize)}>
         {main}
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={defaultSideSize} minSize={minSideSize} maxSize={maxSideSize}>
+      <ResizablePanel
+        defaultSize={String(defaultSideSize)}
+        minSize={String(minSideSize)}
+        maxSize={String(maxSideSize)}
+      >
         {side}
       </ResizablePanel>
     </ResizablePanelGroup>

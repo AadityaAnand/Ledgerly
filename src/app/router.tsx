@@ -7,6 +7,7 @@ import {
   DocumentsPage,
   MessagesPage,
   ReportsPage,
+  ReturnReviewPage,
   ReturnsPage,
   SettingsPage,
   TasksPage,
@@ -26,6 +27,12 @@ const returnsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/returns',
   component: ReturnsPage,
+})
+
+const returnReviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/returns/$returnId',
+  component: ReturnReviewPage,
 })
 
 const documentsRoute = createRoute({
@@ -73,6 +80,7 @@ const settingsRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   dashboardRoute,
   returnsRoute,
+  returnReviewRoute,
   documentsRoute,
   tasksRoute,
   messagesRoute,

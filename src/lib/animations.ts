@@ -16,6 +16,7 @@ export const transitions = {
 export const fadeIn: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: transitions.base },
+  exit: { opacity: 0, transition: transitions.fast },
 }
 
 export const fadeInUp: Variants = {
@@ -31,6 +32,15 @@ export const scaleIn: Variants = {
 export const slideInFromRight: Variants = {
   hidden: { opacity: 0, x: 16 },
   visible: { opacity: 1, x: 0, transition: transitions.slow },
+}
+
+/** Enter/exit for content that swaps wholesale — a different document, a
+ * different selected record. Pair with `AnimatePresence mode="wait"` and a
+ * key that changes with the content (e.g. `key={record.id}`). */
+export const panelSwap: Variants = {
+  hidden: { opacity: 0, y: 6 },
+  visible: { opacity: 1, y: 0, transition: transitions.base },
+  exit: { opacity: 0, y: -6, transition: transitions.fast },
 }
 
 /** Wrap a list container with this and each item with `staggerItem`. */
