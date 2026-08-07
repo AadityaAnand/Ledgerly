@@ -109,6 +109,15 @@ export const users: User[] = [
     organizationId: 'org_1',
     initials: 'RA',
   },
+  {
+    id: 'usr_13',
+    name: 'Grace Kim',
+    email: 'grace.kim@icloud.com',
+    role: 'client',
+    title: 'Client',
+    organizationId: 'org_1',
+    initials: 'GK',
+  },
 ]
 
 /** The signed-in user for this session — no auth, so we just fix it. */
