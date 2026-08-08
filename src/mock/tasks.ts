@@ -126,6 +126,27 @@ export const tasks: Task[] = [
     dueDate: '2026-08-13',
     createdAt: '2026-08-02T10:00:00.000Z',
   },
+  {
+    id: 'task_13',
+    title: 'Collect Q3 bank statements from Union Street Bakery',
+    status: 'todo',
+    priority: 'medium',
+    assigneeId: 'usr_14',
+    clientId: 'cli_5',
+    returnId: 'ret_5',
+    dueDate: '2026-08-12',
+    createdAt: '2026-08-05T09:00:00.000Z',
+  },
+  {
+    id: 'task_14',
+    title: 'Send W-2 reminder to Grace Kim',
+    status: 'todo',
+    priority: 'low',
+    assigneeId: 'usr_14',
+    clientId: 'cli_8',
+    dueDate: '2026-08-13',
+    createdAt: '2026-08-05T09:05:00.000Z',
+  },
 ]
 
 export function getTasksByAssigneeId(assigneeId: string): Task[] {

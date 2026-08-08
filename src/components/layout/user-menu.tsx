@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { UserAvatar } from '@/components/shared/user-avatar'
-import { currentUser } from '@/mock'
+import { useActiveRoleUser } from '@/hooks/use-role'
 import { cn } from '@/lib/utils'
 
 interface UserMenuProps {
@@ -19,6 +19,7 @@ interface UserMenuProps {
 
 export function UserMenu({ collapsed = false }: UserMenuProps) {
   const navigate = useNavigate()
+  const currentUser = useActiveRoleUser()
 
   return (
     <DropdownMenu>

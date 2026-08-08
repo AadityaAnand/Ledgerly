@@ -1,18 +1,14 @@
-import type { UserRole } from './user'
-
 export type Permission =
-  | 'returns.view'
-  | 'returns.edit'
-  | 'returns.approve'
-  | 'documents.view'
-  | 'documents.upload'
-  | 'clients.manage'
-  | 'billing.manage'
-  | 'settings.manage'
-
-export interface RoleDefinition {
-  role: UserRole
-  label: string
-  description: string
-  permissions: Permission[]
-}
+  | 'VIEW_RETURN'
+  | 'EDIT_RETURN'
+  | 'VIEW_DOCUMENT'
+  | 'UPLOAD_DOCUMENT'
+  | 'SEND_CLIENT_MESSAGE'
+  | 'VIEW_INTERNAL_NOTES'
+  | 'REQUEST_DOCUMENT'
+  | 'REVIEW_AI'
+  | 'APPROVE_RETURN'
+  | 'VIEW_CLIENTS'
+  | 'VIEW_FIRM_ANALYTICS'
+  | 'MANAGE_STAFF'
+  | 'MANAGE_SETTINGS'

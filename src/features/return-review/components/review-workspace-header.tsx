@@ -1,12 +1,15 @@
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
+import { toast } from 'sonner'
 import { IconButton } from '@/components/shared/icon-button'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { UserAvatar } from '@/components/shared/user-avatar'
+import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { returnStatusMeta } from '@/utils/status'
 import { getUserById } from '@/mock/users'
+import { useHasPermission } from '@/hooks/use-role'
 import type { Client, TaxReturn } from '@/types'
 
 interface ReviewWorkspaceHeaderProps {
@@ -18,6 +21,7 @@ export function ReviewWorkspaceHeader({ client, taxReturn }: ReviewWorkspaceHead
   const navigate = useNavigate()
   const preparer = getUserById(taxReturn.assignedPreparerId)
   const reviewer = taxReturn.assignedReviewerId ? getUserById(taxReturn.assignedReviewerId) : undefined
+  const canApprove = useHasPermission('APPROVE_RETURN')
 
   return (
     <header className="border-border flex shrink-0 items-center justify-between gap-4 border-b px-5 py-3.5">
@@ -67,6 +71,19 @@ export function ReviewWorkspaceHeader({ client, taxReturn }: ReviewWorkspaceHead
             </Tooltip>
           )}
         </div>
+        {canApprove && (
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={() =>
+              toast(`Approved — ${client.name}`, {
+                description: 'This is a foundation build — this action isn’t wired up yet.',
+              })
+            }
+          >
+            Approve return
+          </Button>
+        )}
       </div>
     </header>
   )

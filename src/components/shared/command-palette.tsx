@@ -11,9 +11,10 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@/components/ui/command'
-import { navItems, quickActions } from '@/components/layout/nav-config'
+import { getNavItemsForRole, quickActions } from '@/components/layout/nav-config'
 import { useUIStore } from '@/store/ui-store'
 import { useNavigationStore } from '@/store/navigation-store'
+import { useActiveRole, useHasPermission } from '@/hooks/use-role'
 import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcut'
 import { resolveWorkspaceHref } from '@/lib/object-graph'
 import { taxReturns } from '@/mock/returns'
@@ -31,6 +32,9 @@ export function CommandPalette() {
   const open = useUIStore((s) => s.commandPaletteOpen)
   const setOpen = useUIStore((s) => s.setCommandPaletteOpen)
   const resetTrail = useNavigationStore((s) => s.resetTrail)
+  const role = useActiveRole()
+  const navItems = getNavItemsForRole(role)
+  const canViewClients = useHasPermission('VIEW_CLIENTS')
 
   useKeyboardShortcut({ key: 'k', onTrigger: () => setOpen(!open) })
 
@@ -128,20 +132,23 @@ export function CommandPalette() {
           })}
         </CommandGroup>
 
-        <CommandSeparator />
-
-        <CommandGroup heading="Clients">
-          {clients.map((client) => (
-            <CommandItem
-              key={client.id}
-              value={`${client.name} client`}
-              onSelect={() => goToObject('client', client.id)}
-            >
-              <Users className="text-foreground-tertiary size-4" aria-hidden="true" />
-              {client.name}
-            </CommandItem>
-          ))}
-        </CommandGroup>
+        {canViewClients && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Clients">
+              {clients.map((client) => (
+                <CommandItem
+                  key={client.id}
+                  value={`${client.name} client`}
+                  onSelect={() => goToObject('client', client.id)}
+                >
+                  <Users className="text-foreground-tertiary size-4" aria-hidden="true" />
+                  {client.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        )}
 
         <CommandSeparator />
 

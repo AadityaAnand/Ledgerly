@@ -3,11 +3,13 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronRight, Home } from 'lucide-react'
 import { getNavItemByHref } from '@/components/layout/nav-config'
 import { useNavigationStore } from '@/store/navigation-store'
+import { useActiveRole } from '@/hooks/use-role'
 import { transitions } from '@/lib/animations'
 
 export function Breadcrumbs() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const activeItem = getNavItemByHref(pathname)
+  const role = useActiveRole()
+  const activeItem = getNavItemByHref(pathname, role)
   const trail = useNavigationStore((s) => s.trail)
   const truncateTo = useNavigationStore((s) => s.truncateTo)
 

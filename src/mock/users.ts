@@ -118,6 +118,15 @@ export const users: User[] = [
     organizationId: 'org_1',
     initials: 'GK',
   },
+  {
+    id: 'usr_14',
+    name: 'Jordan Lee',
+    email: 'jordan.lee@harborviewtax.com',
+    role: 'preparer',
+    title: 'Seasonal Tax Associate',
+    organizationId: 'org_1',
+    initials: 'JL',
+  },
 ]
 
 /** The signed-in user for this session — no auth, so we just fix it. */

@@ -11,7 +11,9 @@ import {
   ReportsPage,
   ReturnReviewPage,
   ReturnsPage,
+  ReviewQueuePage,
   SettingsPage,
+  StaffPage,
   TasksPage,
 } from '@/pages'
 
@@ -97,6 +99,18 @@ const workspaceRoute = createRoute({
   component: WorkspacePage,
 })
 
+const reviewQueueRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/review-queue',
+  component: ReviewQueuePage,
+})
+
+const staffRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/staff',
+  component: StaffPage,
+})
+
 const routeTree = rootRoute.addChildren([
   dashboardRoute,
   returnsRoute,
@@ -111,6 +125,8 @@ const routeTree = rootRoute.addChildren([
   settingsRoute,
   getStartedRoute,
   workspaceRoute,
+  reviewQueueRoute,
+  staffRoute,
 ])
 
 export const router = createRouter({

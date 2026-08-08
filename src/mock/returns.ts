@@ -143,6 +143,20 @@ export const taxReturns: TaxReturn[] = [
     createdAt: '2026-06-01T14:00:00.000Z',
     updatedAt: '2026-08-01T12:00:00.000Z',
   },
+  {
+    id: 'ret_11',
+    clientId: 'cli_9',
+    taxYear: 2025,
+    formType: '1040',
+    status: 'gathering_documents',
+    assignedPreparerId: 'usr_2',
+    dueDate: '2026-10-15',
+    progress: 40,
+    estimatedRefund: 1650,
+    aiFlagCount: 0,
+    createdAt: '2026-07-10T14:00:00.000Z',
+    updatedAt: '2026-08-05T09:00:00.000Z',
+  },
 ]
 
 export function getReturnById(id: string): TaxReturn | undefined {

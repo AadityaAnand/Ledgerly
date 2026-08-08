@@ -167,6 +167,20 @@ export const documents: Document[] = [
     uploadedAt: '2026-08-03T15:40:00.000Z',
     aiExtracted: false,
   },
+  {
+    id: 'doc_13',
+    clientId: 'cli_9',
+    returnId: 'ret_11',
+    name: 'Sarah Chen — W-2.pdf',
+    category: 'w2',
+    status: 'verified',
+    uploadedById: 'usr_1',
+    fileSize: 88_000,
+    fileType: 'pdf',
+    pageCount: 1,
+    uploadedAt: '2026-07-28T08:30:00.000Z',
+    aiExtracted: true,
+  },
 ]
 
 export function getDocumentsByClientId(clientId: string): Document[] {

@@ -105,6 +105,19 @@ export const clients: Client[] = [
     initials: 'GK',
     createdAt: '2026-07-22T10:00:00.000Z',
   },
+  {
+    id: 'cli_9',
+    name: 'Sarah Chen',
+    type: 'individual',
+    email: 'sarah.chen@harborviewtax.com',
+    entityType: 'Individual (1040)',
+    status: 'active',
+    taxYear: 2025,
+    primaryPreparerId: 'usr_2',
+    returnIds: ['ret_11'],
+    initials: 'SC',
+    createdAt: '2026-01-15T10:00:00.000Z',
+  },
 ]
 
 export function getClientById(id: string): Client | undefined {

@@ -1,4 +1,5 @@
-import { Building2, Check, ChevronsUpDown, Plus } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
+import { Building2, Check, ChevronsUpDown, User } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,63 +8,132 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { organizations } from '@/mock'
+import { workspaces } from '@/mock/workspaces'
 import { useWorkspaceStore } from '@/store/workspace-store'
+import { useNavigationStore } from '@/store/navigation-store'
+import { useActiveWorkspace, useOwnWorkspaces } from '@/hooks/use-role'
+import { roleLabels } from '@/lib/permissions'
+import { getUserById } from '@/mock/users'
 import { cn } from '@/lib/utils'
+import type { Workspace } from '@/types'
 
-interface WorkspaceSwitcherProps {
-  collapsed?: boolean
-}
+/** Doubles as the persistent, compact role/context indicator (always
+ * visible, whatever it's set to) and the switcher that lets a user move
+ * between their own workspaces or preview another role for the demo. */
+export function WorkspaceSwitcher({ collapsed = false }: { collapsed?: boolean }) {
+  const navigate = useNavigate()
+  const switchWorkspace = useWorkspaceStore((s) => s.switchWorkspace)
+  const resetTrail = useNavigationStore((s) => s.resetTrail)
+  const active = useActiveWorkspace()
+  const ownWorkspaces = useOwnWorkspaces()
+  const activeUser = getUserById(active.userId)
 
-export function WorkspaceSwitcher({ collapsed = false }: WorkspaceSwitcherProps) {
-  const currentOrganizationId = useWorkspaceStore((s) => s.currentOrganizationId)
-  const setCurrentOrganizationId = useWorkspaceStore((s) => s.setCurrentOrganizationId)
-  const current = organizations.find((org) => org.id === currentOrganizationId) ?? organizations[0]!
+  const otherWorkspaces = workspaces.filter((w) => w.userId !== active.userId)
+
+  function handleSwitch(workspaceId: string) {
+    if (workspaceId === active.id) return
+    switchWorkspace(workspaceId)
+    resetTrail()
+    void navigate({ to: '/' })
+  }
+
+  const Icon = active.kind === 'personal' ? User : Building2
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
+          aria-label={`Switch workspace — currently ${active.label}, ${active.roleLabel}`}
           className={cn(
-            'hover:bg-surface-hover flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition-colors',
+            'hover:bg-surface-hover focus-visible:-outline-offset-2 flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition-colors',
             collapsed && 'justify-center px-0'
           )}
         >
           <div className="bg-primary-subtle text-primary-subtle-foreground flex size-7 shrink-0 items-center justify-center rounded-md">
-            <Building2 className="size-3.5" aria-hidden="true" />
+            <Icon className="size-3.5" aria-hidden="true" />
           </div>
           {!collapsed && (
             <>
               <div className="min-w-0 flex-1">
-                <p className="text-foreground truncate text-sm font-medium">{current.name}</p>
-                <p className="text-foreground-tertiary truncate text-xs capitalize">{current.plan} plan</p>
+                <p className="text-foreground truncate text-sm font-medium">
+                  {active.organizationName ?? active.label}
+                </p>
+                <p className="text-foreground-tertiary truncate text-xs">{active.roleLabel}</p>
               </div>
               <ChevronsUpDown className="text-foreground-tertiary size-3.5 shrink-0" aria-hidden="true" />
             </>
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-64">
-        <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
+      <DropdownMenuContent align="start" className="w-72">
+        <DropdownMenuLabel className="font-normal">
+          <p className="text-foreground text-sm font-medium">{activeUser?.name}</p>
+          <p className="text-foreground-tertiary text-xs">
+            {active.label} · {active.roleLabel}
+          </p>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {organizations.map((org) => (
-          <DropdownMenuItem key={org.id} onSelect={() => setCurrentOrganizationId(org.id)}>
-            <div className="bg-primary-subtle text-primary-subtle-foreground flex size-6 shrink-0 items-center justify-center rounded-md">
-              <Building2 className="size-3" aria-hidden="true" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate">{org.name}</p>
-            </div>
-            {org.id === current.id && <Check className="size-3.5" aria-hidden="true" />}
-          </DropdownMenuItem>
+
+        <DropdownMenuLabel className="text-foreground-tertiary text-[11px] font-semibold tracking-wide uppercase">
+          Your workspaces
+        </DropdownMenuLabel>
+        {ownWorkspaces.map((workspace) => (
+          <WorkspaceMenuItem
+            key={workspace.id}
+            workspace={workspace}
+            isActive={workspace.id === active.id}
+            onSelect={() => handleSwitch(workspace.id)}
+          />
         ))}
+
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
-          <Plus className="size-4" aria-hidden="true" />
-          Create workspace
-        </DropdownMenuItem>
+        <DropdownMenuLabel className="text-foreground-tertiary text-[11px] font-semibold tracking-wide uppercase">
+          Preview other roles
+        </DropdownMenuLabel>
+        <p className="text-foreground-tertiary px-2 pb-1.5 text-xs leading-relaxed">
+          For this demo — see how Ledgerly looks for a different person and role.
+        </p>
+        {otherWorkspaces.map((workspace) => (
+          <WorkspaceMenuItem
+            key={workspace.id}
+            workspace={workspace}
+            isActive={false}
+            onSelect={() => handleSwitch(workspace.id)}
+            showUserName
+          />
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+function WorkspaceMenuItem({
+  workspace,
+  isActive,
+  onSelect,
+  showUserName = false,
+}: {
+  workspace: Workspace
+  isActive: boolean
+  onSelect: () => void
+  showUserName?: boolean
+}) {
+  const user = getUserById(workspace.userId)
+  const Icon = workspace.kind === 'personal' ? User : Building2
+
+  return (
+    <DropdownMenuItem onSelect={onSelect}>
+      <div className="bg-surface flex size-6 shrink-0 items-center justify-center rounded-md">
+        <Icon className="size-3" aria-hidden="true" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate">
+          {showUserName ? `${user?.name} — ${roleLabels[workspace.role]}` : workspace.label}
+        </p>
+        {!showUserName && <p className="text-foreground-tertiary truncate text-xs">{workspace.roleLabel}</p>}
+      </div>
+      {isActive && <Check className="size-3.5 shrink-0" aria-hidden="true" />}
+    </DropdownMenuItem>
   )
 }

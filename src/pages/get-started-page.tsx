@@ -11,6 +11,8 @@ import { staggerItem } from '@/lib/animations'
 import { conversations } from '@/mock/conversations'
 import { getClientById } from '@/mock/clients'
 import { getDocumentsByClientId } from '@/mock/documents'
+import { getReturnById } from '@/mock/returns'
+import { getUserById } from '@/mock/users'
 import { fetchOnboardingProfile } from '@/services/onboarding.service'
 import { useOnboardingStore } from '@/store/onboarding-store'
 import { WelcomeHero } from '@/features/onboarding/components/welcome-hero'
@@ -23,11 +25,17 @@ import { DeadlinesPanel } from '@/features/onboarding/components/deadlines-panel
 import { MessagesTeaser } from '@/features/onboarding/components/messages-teaser'
 import { HelpSupportPanel } from '@/features/onboarding/components/help-support-panel'
 
-const CLIENT_ID = 'cli_8'
-
 const cardClass = 'border-border bg-surface-raised rounded-xl border p-5'
 
-export function GetStartedPage() {
+interface GetStartedPageProps {
+  /** Which client's onboarding/return workspace to show. Defaults to the
+   * Challenge 3 demo client so the standalone `/get-started` route is
+   * unaffected — Challenge 5 passes the active workspace's own clientId so
+   * the same page serves the Client and Business Owner roles. */
+  clientId?: string
+}
+
+export function GetStartedPage({ clientId = 'cli_8' }: GetStartedPageProps) {
   const profile = useOnboardingStore((s) => s.profile)
   const uploadedDocuments = useOnboardingStore((s) => s.uploadedDocuments)
   const isLoading = useOnboardingStore((s) => s.isLoading)
@@ -39,16 +47,18 @@ export function GetStartedPage() {
   useEffect(() => {
     setLoading(true)
     let cancelled = false
-    fetchOnboardingProfile(CLIENT_ID).then((data) => {
-      if (!cancelled && data) initialize(data, getDocumentsByClientId(CLIENT_ID))
+    fetchOnboardingProfile(clientId).then((data) => {
+      if (!cancelled && data) initialize(data, getDocumentsByClientId(clientId))
     })
     return () => {
       cancelled = true
     }
-  }, [initialize, setLoading])
+  }, [clientId, initialize, setLoading])
 
-  const client = getClientById(CLIENT_ID)
+  const client = getClientById(clientId)
   const firstName = client?.name.split(' ')[0] ?? 'there'
+  const taxReturn = profile ? getReturnById(profile.returnId) : undefined
+  const preparer = taxReturn ? getUserById(taxReturn.assignedPreparerId) : undefined
 
   const completedSteps = useMemo(() => profile?.steps.filter((s) => s.status === 'complete') ?? [], [profile])
   const totalSteps = profile?.steps.length ?? 0
@@ -77,8 +87,11 @@ export function GetStartedPage() {
   )
 
   const clientConversations = useMemo(
-    () => conversations.filter((c) => c.clientId === CLIENT_ID).sort((a, b) => (a.lastActivityAt < b.lastActivityAt ? 1 : -1)),
-    []
+    () =>
+      conversations
+        .filter((c) => c.clientId === clientId)
+        .sort((a, b) => (a.lastActivityAt < b.lastActivityAt ? 1 : -1)),
+    [clientId]
   )
 
   const activityItems = useMemo(
@@ -104,11 +117,15 @@ export function GetStartedPage() {
     )
   }
 
+  const returnLabel = taxReturn
+    ? `${taxReturn.taxYear} ${client.type === 'business' ? 'Business' : 'Personal'} Tax Return · Form ${taxReturn.formType}`
+    : 'Your tax return'
+
   return (
     <PageContainer>
       <WelcomeHero
         firstName={firstName}
-        returnLabel={`2025 Personal Tax Return · Form ${'1040'}`}
+        returnLabel={returnLabel}
         percentComplete={percentComplete}
         estimatedMinutesRemaining={estimatedMinutesRemaining}
         statusLabel={currentAction ? `Waiting on you: ${currentAction.title}` : 'All caught up'}
@@ -162,7 +179,10 @@ export function GetStartedPage() {
           </div>
 
           <div className={cardClass}>
-            <SectionHeader title="Tax questionnaire" description="A few quick questions — answer at your own pace" />
+            <SectionHeader
+              title={client.type === 'business' ? 'Business questionnaire' : 'Tax questionnaire'}
+              description="A few quick questions — answer at your own pace"
+            />
             <div className="mt-4">
               <QuestionnaireTeaser
                 questions={profile.questionnaireQuestions}
@@ -206,7 +226,7 @@ export function GetStartedPage() {
           <div className={cardClass}>
             <SectionHeader title="Help & support" />
             <div className="mt-4">
-              <HelpSupportPanel cpaName="Devon Ellis" />
+              <HelpSupportPanel cpaName={preparer?.name ?? 'your CPA'} />
             </div>
           </div>
         </div>
