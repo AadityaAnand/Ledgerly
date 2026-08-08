@@ -1,10 +1,12 @@
 import type {
   AISuggestionSeverity,
   ApprovalStatus,
+  BlockerSeverity,
   ConfidenceLevel,
   ConversationCategory,
   DocumentRequestStatus,
   DocumentStatus,
+  ReturnCondition,
   ReturnStatus,
   TaskPriority,
   TaskStatus,
@@ -104,6 +106,19 @@ export const aiSeverityMeta: Record<AISuggestionSeverity, StatusMeta> = {
   info: { label: 'Info', tone: 'ai' },
   warning: { label: 'Warning', tone: 'warning' },
   critical: { label: 'Critical', tone: 'danger' },
+}
+
+export const blockerSeverityTone: Record<BlockerSeverity, Tone> = {
+  info: 'ai',
+  warning: 'warning',
+  danger: 'danger',
+}
+
+export const conditionTone: Record<ReturnCondition, Tone> = {
+  blocked: 'danger',
+  needs_attention: 'warning',
+  waiting_on_client: 'ai',
+  waiting_on_cpa: 'primary',
 }
 
 /** ConversationPriority shares the exact same union as TaskPriority — reuse

@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ListTree } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconButton } from '@/components/shared/icon-button'
 import { StatusBadge } from '@/components/shared/status-badge'
@@ -7,6 +7,8 @@ import { UserAvatar } from '@/components/shared/user-avatar'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { ReturnStatusPanel } from '@/features/return-status/components/return-status-panel'
 import { returnStatusMeta } from '@/utils/status'
 import { getUserById } from '@/mock/users'
 import { useHasPermission } from '@/hooks/use-role'
@@ -49,6 +51,25 @@ export function ReviewWorkspaceHeader({ client, taxReturn }: ReviewWorkspaceHead
           <span className="text-foreground-tertiary text-xs tabular-nums">{taxReturn.progress}%</span>
         </div>
         <StatusBadge {...returnStatusMeta[taxReturn.status]} />
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <ListTree className="size-3.5" aria-hidden="true" />
+              Status
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
+            <SheetHeader className="border-border border-b">
+              <SheetTitle>{client.name}</SheetTitle>
+              <SheetDescription>
+                {taxReturn.taxYear} · Form {taxReturn.formType}
+              </SheetDescription>
+            </SheetHeader>
+            <div className="flex-1 px-4">
+              <ReturnStatusPanel taxReturn={taxReturn} />
+            </div>
+          </SheetContent>
+        </Sheet>
         <div className="flex items-center -space-x-1.5">
           {preparer && (
             <Tooltip>

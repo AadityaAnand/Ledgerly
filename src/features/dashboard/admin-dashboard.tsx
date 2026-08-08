@@ -17,6 +17,7 @@ import { users, getUserById } from '@/mock/users'
 import { activityFeed } from '@/mock/timeline'
 import { conversationMessages } from '@/mock/conversation-messages'
 import { useActiveRoleUser } from '@/hooks/use-role'
+import { RETURN_STAGES, getEffectiveReturnStatus, stageIcons } from '@/lib/return-lifecycle'
 
 export function AdminDashboard() {
   const navigate = useNavigate()
@@ -44,6 +45,16 @@ export function AdminDashboard() {
         .slice(0, 6),
     [staff]
   )
+
+  const stageDistribution = useMemo(() => {
+    const counts = new Map(RETURN_STAGES.map((s) => [s.stage, 0]))
+    for (const r of taxReturns) {
+      const detail = getEffectiveReturnStatus(r)
+      counts.set(detail.stage, (counts.get(detail.stage) ?? 0) + 1)
+    }
+    const max = Math.max(1, ...counts.values())
+    return RETURN_STAGES.map((s) => ({ definition: s, count: counts.get(s.stage) ?? 0, max }))
+  }, [])
 
   const timelineItems = activityFeed.slice(0, 6).map((item) => {
     const actor = getUserById(item.actorId)
@@ -74,6 +85,30 @@ export function AdminDashboard() {
         <MetricCard label="Staff" value={String(staff.length)} icon={UserCog} />
         <MetricCard label="Outstanding requests" value={String(outstandingRequests.length)} icon={Inbox} />
       </motion.div>
+
+      <div className="flex flex-col gap-4">
+        <SectionHeader title="Returns by stage" description="Where every return sits in the firm's pipeline right now" />
+        <div className="bg-surface-raised border-border flex flex-col gap-3 rounded-xl border p-5">
+          {stageDistribution.map(({ definition, count, max }) => {
+            const Icon = stageIcons[definition.stage]
+            return (
+              <div key={definition.stage} className="flex items-center gap-3">
+                <Icon className="text-foreground-tertiary size-4 shrink-0" aria-hidden="true" />
+                <span className="text-foreground-secondary w-36 shrink-0 truncate text-sm">{definition.label}</span>
+                <div className="bg-primary/10 h-2 flex-1 overflow-hidden rounded-full">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(count / max) * 100}%` }}
+                    transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                    className="bg-primary h-full rounded-full"
+                  />
+                </div>
+                <span className="text-foreground-tertiary w-6 shrink-0 text-right text-sm tabular-nums">{count}</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
         <div className="flex flex-col gap-4 xl:col-span-2">

@@ -4,15 +4,15 @@ import { toast } from 'sonner'
 import { PageContainer } from '@/components/layout/page-container'
 import { PageHeader } from '@/components/layout/page-header'
 import { DataGrid } from '@/components/shared/data-grid'
-import { StatusBadge } from '@/components/shared/status-badge'
 import { AIBadge } from '@/components/shared/ai-badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { StageBadge } from '@/features/return-status/components/stage-badge'
 import { taxReturns } from '@/mock/returns'
 import { getClientById } from '@/mock/clients'
 import { getUserById } from '@/mock/users'
 import { useHasPermission } from '@/hooks/use-role'
-import { returnStatusMeta } from '@/utils/status'
+import { getEffectiveReturnStatus } from '@/lib/return-lifecycle'
 import { formatDate } from '@/utils/format'
 import type { TaxReturn } from '@/types'
 import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
@@ -73,8 +73,8 @@ export function ReviewQueuePage() {
     },
     {
       accessorKey: 'status',
-      header: 'Status',
-      cell: ({ getValue }) => <StatusBadge {...returnStatusMeta[getValue<TaxReturn['status']>()]} />,
+      header: 'Stage',
+      cell: ({ row }) => <StageBadge stage={getEffectiveReturnStatus(row.original).stage} />,
     },
     ...(canApprove
       ? [

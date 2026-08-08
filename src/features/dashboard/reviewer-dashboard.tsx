@@ -11,12 +11,14 @@ import { StatusBadge } from '@/components/shared/status-badge'
 import { Button } from '@/components/ui/button'
 import { staggerContainer, staggerItem } from '@/lib/animations'
 import { resolveWorkspaceHref } from '@/lib/object-graph'
+import { getEffectiveReturnStatus } from '@/lib/return-lifecycle'
+import { StageBadge } from '@/features/return-status/components/stage-badge'
 import { getClientById } from '@/mock/clients'
 import { getReturnById, taxReturns } from '@/mock/returns'
 import { taxFieldTraces } from '@/mock/field-traces'
 import { aiSuggestions } from '@/mock/ai-suggestions'
 import { useActiveRoleUser, useHasPermission } from '@/hooks/use-role'
-import { aiSeverityMeta, returnStatusMeta } from '@/utils/status'
+import { aiSeverityMeta } from '@/utils/status'
 
 export function ReviewerDashboard() {
   const navigate = useNavigate()
@@ -87,7 +89,7 @@ export function ReviewerDashboard() {
                     {r.aiFlagCount} AI flag{r.aiFlagCount === 1 ? '' : 's'} · {r.progress}% complete
                   </p>
                 </button>
-                <StatusBadge {...returnStatusMeta[r.status]} />
+                <StageBadge stage={getEffectiveReturnStatus(r).stage} />
                 {canApprove && (
                   <div className="flex shrink-0 items-center gap-1.5">
                     <Button size="sm" variant="outline" onClick={() => handleAction('Requested changes', r.id)}>

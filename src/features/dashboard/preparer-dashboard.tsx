@@ -12,6 +12,7 @@ import { AIBadge } from '@/components/shared/ai-badge'
 import { Timeline } from '@/components/shared/timeline'
 import { DataGrid } from '@/components/shared/data-grid'
 import { Progress } from '@/components/ui/progress'
+import { StageBadge } from '@/features/return-status/components/stage-badge'
 import { staggerContainer, staggerItem } from '@/lib/animations'
 import { getUserById } from '@/mock/users'
 import { getClientById } from '@/mock/clients'
@@ -21,7 +22,8 @@ import { activityFeed } from '@/mock/timeline'
 import { messageThreads } from '@/mock/messages'
 import { aiSuggestions } from '@/mock/ai-suggestions'
 import { useActiveRoleUser } from '@/hooks/use-role'
-import { returnStatusMeta, taskPriorityMeta } from '@/utils/status'
+import { taskPriorityMeta } from '@/utils/status'
+import { getEffectiveReturnStatus } from '@/lib/return-lifecycle'
 import { formatDate } from '@/utils/format'
 import type { TaxReturn } from '@/types'
 import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
@@ -44,8 +46,8 @@ const returnColumns: LegacyColumnDef<TaxReturn, unknown>[] = [
   },
   {
     accessorKey: 'status',
-    header: 'Status',
-    cell: ({ getValue }) => <StatusBadge {...returnStatusMeta[getValue<TaxReturn['status']>()]} />,
+    header: 'Stage',
+    cell: ({ row }) => <StageBadge stage={getEffectiveReturnStatus(row.original).stage} />,
   },
   {
     accessorKey: 'progress',

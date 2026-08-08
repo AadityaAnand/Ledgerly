@@ -1,18 +1,22 @@
 import { useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { CheckCircle2 } from 'lucide-react'
 import { PageContainer } from '@/components/layout/page-container'
 import { SectionHeader } from '@/components/layout/section-header'
-import { Progress } from '@/components/ui/progress'
 import { Timeline } from '@/components/shared/timeline'
 import { EmptyState } from '@/components/shared/empty-state'
-import { CheckCircle2 } from 'lucide-react'
+import { StatusBadge } from '@/components/shared/status-badge'
+import { StageBadge, ConditionBadge } from '@/features/return-status/components/stage-badge'
+import { ReturnStatusPanel } from '@/features/return-status/components/return-status-panel'
 import { staggerItem } from '@/lib/animations'
+import { getEffectiveReturnStatus } from '@/lib/return-lifecycle'
 import { conversations } from '@/mock/conversations'
 import { getClientById } from '@/mock/clients'
 import { getDocumentsByClientId } from '@/mock/documents'
-import { getReturnById } from '@/mock/returns'
+import { getReturnById, getReturnsByClientId } from '@/mock/returns'
 import { getUserById } from '@/mock/users'
+import { documentStatusMeta } from '@/utils/status'
 import { fetchOnboardingProfile } from '@/services/onboarding.service'
 import { useOnboardingStore } from '@/store/onboarding-store'
 import { WelcomeHero } from '@/features/onboarding/components/welcome-hero'
@@ -48,7 +52,12 @@ export function GetStartedPage({ clientId = 'cli_8' }: GetStartedPageProps) {
     setLoading(true)
     let cancelled = false
     fetchOnboardingProfile(clientId).then((data) => {
-      if (!cancelled && data) initialize(data, getDocumentsByClientId(clientId))
+      if (cancelled) return
+      if (data) {
+        initialize(data, getDocumentsByClientId(clientId))
+      } else {
+        setLoading(false)
+      }
     })
     return () => {
       cancelled = true
@@ -57,12 +66,13 @@ export function GetStartedPage({ clientId = 'cli_8' }: GetStartedPageProps) {
 
   const client = getClientById(clientId)
   const firstName = client?.name.split(' ')[0] ?? 'there'
-  const taxReturn = profile ? getReturnById(profile.returnId) : undefined
+  const primaryReturn = getReturnsByClientId(clientId)[0]
+  const taxReturn = profile ? (getReturnById(profile.returnId) ?? primaryReturn) : primaryReturn
   const preparer = taxReturn ? getUserById(taxReturn.assignedPreparerId) : undefined
+  const returnStatus = taxReturn ? getEffectiveReturnStatus(taxReturn) : undefined
 
   const completedSteps = useMemo(() => profile?.steps.filter((s) => s.status === 'complete') ?? [], [profile])
   const totalSteps = profile?.steps.length ?? 0
-  const percentComplete = totalSteps > 0 ? Math.round((completedSteps.length / totalSteps) * 100) : 0
   const currentStep = useMemo(() => profile?.steps.find((s) => s.status === 'upcoming'), [profile])
   const currentAction = useMemo(
     () => profile?.nextActions.find((a) => a.stepId === currentStep?.id),
@@ -108,7 +118,7 @@ export function GetStartedPage({ clientId = 'cli_8' }: GetStartedPageProps) {
     [completedSteps, firstName]
   )
 
-  if (isLoading || !profile || !client) {
+  if (isLoading || !client) {
     return (
       <PageContainer>
         <div className="border-border bg-surface-raised h-32 animate-pulse rounded-2xl border" />
@@ -121,28 +131,89 @@ export function GetStartedPage({ clientId = 'cli_8' }: GetStartedPageProps) {
     ? `${taxReturn.taxYear} ${client.type === 'business' ? 'Business' : 'Personal'} Tax Return · Form ${taxReturn.formType}`
     : 'Your tax return'
 
+  // A client with no onboarding checklist (already past first-time setup) —
+  // the return lifecycle status is the whole story for them.
+  if (!profile) {
+    const documents = getDocumentsByClientId(clientId)
+    return (
+      <PageContainer>
+        <WelcomeHero
+          firstName={firstName}
+          returnLabel={returnLabel}
+          percentComplete={taxReturn?.progress ?? 0}
+          statusLabel={returnStatus ? returnStatus.nextAction.action : 'All caught up'}
+        />
+
+        {taxReturn && (
+          <div className={cardClass}>
+            <ReturnStatusPanel taxReturn={taxReturn} />
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <div className={cardClass}>
+            <SectionHeader title="Documents" />
+            <div className="mt-4">
+              {documents.length === 0 ? (
+                <EmptyState icon={CheckCircle2} title="No documents yet" className="py-8" />
+              ) : (
+                <ul className="flex flex-col gap-1.5">
+                  {documents.map((doc) => (
+                    <li
+                      key={doc.id}
+                      className="border-border-subtle flex items-center justify-between gap-3 rounded-lg border px-3 py-2.5"
+                    >
+                      <span className="text-foreground truncate text-sm">{doc.name}</span>
+                      <StatusBadge {...documentStatusMeta[doc.status]} className="shrink-0" />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+
+          <div className={cardClass}>
+            <SectionHeader title="Messages" />
+            <div className="mt-4">
+              <MessagesTeaser conversations={clientConversations} />
+            </div>
+          </div>
+        </div>
+
+        <div className={cardClass}>
+          <SectionHeader title="Help & support" />
+          <div className="mt-4">
+            <HelpSupportPanel cpaName={preparer?.name ?? 'your CPA'} />
+          </div>
+        </div>
+      </PageContainer>
+    )
+  }
+
   return (
     <PageContainer>
       <WelcomeHero
         firstName={firstName}
         returnLabel={returnLabel}
-        percentComplete={percentComplete}
+        percentComplete={Math.round((completedSteps.length / (totalSteps || 1)) * 100)}
         estimatedMinutesRemaining={estimatedMinutesRemaining}
         statusLabel={currentAction ? `Waiting on you: ${currentAction.title}` : 'All caught up'}
       />
 
-      <motion.div
-        variants={staggerItem}
-        initial="hidden"
-        animate="visible"
-        className={cardClass + ' flex items-center gap-5'}
-      >
-        <Progress value={percentComplete} className="h-2 flex-1" />
-        <div className="text-foreground-secondary flex shrink-0 items-center gap-4 text-sm">
-          <span className="tabular-nums">{completedSteps.length} completed</span>
-          <span className="text-foreground-tertiary tabular-nums">{totalSteps - completedSteps.length} remaining</span>
-        </div>
-      </motion.div>
+      {returnStatus && (
+        <motion.div
+          variants={staggerItem}
+          initial="hidden"
+          animate="visible"
+          className={cardClass + ' flex items-center justify-between gap-3'}
+        >
+          <div className="flex items-center gap-2">
+            <StageBadge stage={returnStatus.stage} />
+            {returnStatus.condition && <ConditionBadge condition={returnStatus.condition} />}
+          </div>
+          <span className="text-foreground-tertiary text-xs">Return status</span>
+        </motion.div>
+      )}
 
       {currentAction ? (
         <NextActionCard

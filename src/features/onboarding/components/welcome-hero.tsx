@@ -7,7 +7,10 @@ interface WelcomeHeroProps {
   firstName: string
   returnLabel: string
   percentComplete: number
-  estimatedMinutesRemaining: number
+  /** Omit when there's no meaningful checklist-time estimate (e.g. a
+   * returning client with no onboarding steps left) — the clause is hidden
+   * rather than showing a misleading "0 min left". */
+  estimatedMinutesRemaining?: number
   statusLabel: string
 }
 
@@ -32,7 +35,8 @@ export function WelcomeHero({
         <p className="text-foreground-secondary mt-1.5 text-sm">{returnLabel}</p>
         <p className="text-foreground-tertiary mt-3 flex items-center gap-1.5 text-sm">
           <Clock className="size-3.5 shrink-0" aria-hidden="true" />
-          About {estimatedMinutesRemaining} min left · {statusLabel}
+          {estimatedMinutesRemaining !== undefined ? `About ${estimatedMinutesRemaining} min left · ` : ''}
+          {statusLabel}
         </p>
       </div>
 

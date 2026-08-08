@@ -10,7 +10,9 @@ import { MetricCard } from '@/components/shared/metric-card'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { MessagesTeaser } from '@/features/onboarding/components/messages-teaser'
+import { StageBadge } from '@/features/return-status/components/stage-badge'
 import { staggerContainer, staggerItem } from '@/lib/animations'
+import { getEffectiveReturnStatus } from '@/lib/return-lifecycle'
 import { tasks } from '@/mock/tasks'
 import { getClientById } from '@/mock/clients'
 import { getReturnById } from '@/mock/returns'
@@ -113,7 +115,7 @@ export function SeasonalDashboard() {
                   <p className="text-foreground text-sm font-medium">
                     {client?.name} — {taxReturn.formType}
                   </p>
-                  <span className="text-foreground-tertiary text-xs tabular-nums">{taxReturn.progress}%</span>
+                  <StageBadge stage={getEffectiveReturnStatus(taxReturn).stage} />
                 </motion.button>
               )
             })}
