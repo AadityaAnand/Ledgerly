@@ -1,4 +1,5 @@
 import type { TaxReturn } from '@/types'
+import { generatedReturns } from './generated-work'
 
 export const taxReturns: TaxReturn[] = [
   {
@@ -158,6 +159,8 @@ export const taxReturns: TaxReturn[] = [
     updatedAt: '2026-08-05T09:00:00.000Z',
   },
 ]
+
+taxReturns.push(...generatedReturns)
 
 export function getReturnById(id: string): TaxReturn | undefined {
   return taxReturns.find((r) => r.id === id)

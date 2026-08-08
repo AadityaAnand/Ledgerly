@@ -8,7 +8,8 @@ import { EmptyState } from '@/components/shared/empty-state'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { UserAvatar } from '@/components/shared/user-avatar'
 import { PropertyList, type PropertyItem } from '@/components/shared/property-list'
-import { AIBadge } from '@/components/shared/ai-badge'
+import { AIIndicator } from '@/components/shared/field-affordance/ai-indicator'
+import { ReadOnlyField } from '@/components/shared/field-affordance/read-only-field'
 import { fadeIn } from '@/lib/animations'
 import { getWorkspaceObject, getRelatedBundle } from '@/lib/object-graph'
 import { getDocumentById } from '@/mock/documents'
@@ -62,15 +63,16 @@ export function WorkspacePage() {
   const meta = workspaceTypeMeta[summary.type]
   const owner = summary.ownerId ? getUserById(summary.ownerId) : undefined
 
+  const documentForDisplay = summary.type === 'document' ? getDocumentById(summary.id) : undefined
+
   const extraProperties: PropertyItem[] = []
   if (summary.type === 'document') {
-    const doc = getDocumentById(summary.id)
+    const doc = documentForDisplay
     if (doc) {
       extraProperties.push(
-        { label: 'Category', value: doc.category.toUpperCase() },
         { label: 'File', value: `${doc.fileType.toUpperCase()} · ${formatFileSize(doc.fileSize)}` },
         { label: 'Uploaded', value: formatRelativeTime(doc.uploadedAt) },
-        { label: 'AI extracted', value: doc.aiExtracted ? <AIBadge label="Extracted" /> : 'No' }
+        { label: 'AI extracted', value: doc.aiExtracted ? <AIIndicator label="Extracted" /> : 'No' }
       )
     }
   } else if (summary.type === 'task') {
@@ -136,6 +138,16 @@ export function WorkspacePage() {
                     {extraProperties.length > 0 && (
                       <div className="border-border-subtle rounded-xl border px-4">
                         <PropertyList items={extraProperties} />
+                      </div>
+                    )}
+
+                    {documentForDisplay && (
+                      <div className="border-border-subtle rounded-xl border px-1">
+                        <ReadOnlyField
+                          label="Category"
+                          value={documentForDisplay.category.toUpperCase()}
+                          helperText="Read-only — set automatically when the document was classified."
+                        />
                       </div>
                     )}
 

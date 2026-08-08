@@ -1,6 +1,8 @@
-import { HelpCircle } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { EditableField } from '@/components/shared/field-affordance'
 import { staggerContainer, staggerItem } from '@/lib/animations'
 import type { QuestionnaireQuestion } from '@/types'
 
@@ -12,25 +14,29 @@ interface QuestionnaireTeaserProps {
 }
 
 /** Progressive disclosure: only the next couple of unanswered questions are
- * shown, never the full questionnaire. */
+ * shown, never the full questionnaire. Each answer is editable inline —
+ * click, type, save — the same affordance used everywhere else in Ledgerly. */
 export function QuestionnaireTeaser({ questions, onContinue }: QuestionnaireTeaserProps) {
   const preview = questions.slice(0, PREVIEW_COUNT)
   const remaining = questions.length - preview.length
+  const [answers, setAnswers] = useState<Record<string, string>>({})
 
   return (
     <div className="flex flex-col gap-3">
       <motion.ul variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-2">
         {preview.map((q) => (
-          <motion.li
-            key={q.id}
-            variants={staggerItem}
-            className="border-border-subtle flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
-          >
-            <HelpCircle className="text-foreground-tertiary mt-0.5 size-4 shrink-0" aria-hidden="true" />
-            <div className="min-w-0">
-              <p className="text-foreground text-sm font-medium">{q.question}</p>
-              {q.helpText && <p className="text-foreground-tertiary mt-0.5 text-xs">{q.helpText}</p>}
-            </div>
+          <motion.li key={q.id} variants={staggerItem} className="border-border-subtle rounded-lg border">
+            <EditableField
+              label={q.question}
+              value={answers[q.id] || 'Tap to answer'}
+              editValue={answers[q.id] ?? ''}
+              helperText={q.helpText}
+              onSave={async (value) => {
+                await new Promise((r) => setTimeout(r, 300))
+                setAnswers((prev) => ({ ...prev, [q.id]: value }))
+                toast.success('Answer saved')
+              }}
+            />
           </motion.li>
         ))}
       </motion.ul>

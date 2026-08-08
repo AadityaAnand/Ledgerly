@@ -1,4 +1,5 @@
 import type { Client } from '@/types'
+import { generatedClients } from './generated-work'
 
 export const clients: Client[] = [
   {
@@ -119,6 +120,8 @@ export const clients: Client[] = [
     createdAt: '2026-01-15T10:00:00.000Z',
   },
 ]
+
+clients.push(...generatedClients)
 
 export function getClientById(id: string): Client | undefined {
   return clients.find((client) => client.id === id)

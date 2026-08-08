@@ -1,4 +1,5 @@
 import type { Task } from '@/types'
+import { generatedTasks } from './generated-work'
 
 export const tasks: Task[] = [
   {
@@ -148,6 +149,8 @@ export const tasks: Task[] = [
     createdAt: '2026-08-05T09:05:00.000Z',
   },
 ]
+
+tasks.push(...generatedTasks)
 
 export function getTasksByAssigneeId(assigneeId: string): Task[] {
   return tasks.filter((task) => task.assigneeId === assigneeId)

@@ -1,6 +1,7 @@
 import { Calculator, FileSearch, FileWarning } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { ConfidenceMeter } from '@/components/shared/confidence-meter'
+import { ConfidenceIndicator } from '@/components/shared/field-affordance/confidence-indicator'
+import { VerificationBadge } from '@/components/shared/field-affordance/verification-badge'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { verificationStatusMeta } from '@/utils/status'
@@ -98,9 +99,13 @@ export function FieldRow({ trace, isSelected, onSelect, onHoverChange }: FieldRo
         {formatCurrency(trace.value)}
       </span>
 
-      <ConfidenceMeter score={trace.confidence} size="sm" />
+      <ConfidenceIndicator score={trace.confidence} size="sm" />
 
-      <StatusBadge {...verificationStatusMeta[trace.verification]} className="shrink-0 whitespace-nowrap" />
+      {trace.verification === 'verified' ? (
+        <VerificationBadge className="shrink-0" />
+      ) : (
+        <StatusBadge {...verificationStatusMeta[trace.verification]} className="shrink-0 whitespace-nowrap" />
+      )}
     </motion.button>
   )
 }

@@ -1,193 +1,145 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { differenceInCalendarDays, parseISO } from 'date-fns'
-import { CheckSquare, Clock, FileText, MessageSquare, Sparkles } from 'lucide-react'
+import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { CheckCircle2, Plus } from 'lucide-react'
 import { PageContainer } from '@/components/layout/page-container'
 import { PageHeader } from '@/components/layout/page-header'
 import { SectionHeader } from '@/components/layout/section-header'
-import { MetricCard } from '@/components/shared/metric-card'
-import { StatusBadge } from '@/components/shared/status-badge'
-import { AIBadge } from '@/components/shared/ai-badge'
-import { Timeline } from '@/components/shared/timeline'
-import { DataGrid } from '@/components/shared/data-grid'
-import { Progress } from '@/components/ui/progress'
-import { StageBadge } from '@/features/return-status/components/stage-badge'
-import { staggerContainer, staggerItem } from '@/lib/animations'
-import { getUserById } from '@/mock/users'
-import { getClientById } from '@/mock/clients'
+import { EmptyState } from '@/components/shared/empty-state'
+import { Button } from '@/components/ui/button'
+import { PriorityWorkCard } from '@/features/dashboard/components/priority-work-card'
+import { WorkQueueTable } from '@/features/dashboard/components/work-queue-table'
+import { WorkItemFiltersBar } from '@/features/dashboard/components/work-item-filters'
+import { DeadlinesStrip } from '@/features/dashboard/components/deadlines-strip'
+import { WorkloadSummary } from '@/features/dashboard/components/workload-summary'
+import { staggerContainer } from '@/lib/animations'
+import { getDueBucket, getWorkItemsForUser } from '@/lib/work-priority'
 import { taxReturns } from '@/mock/returns'
-import { tasks } from '@/mock/tasks'
-import { activityFeed } from '@/mock/timeline'
-import { messageThreads } from '@/mock/messages'
-import { aiSuggestions } from '@/mock/ai-suggestions'
-import { useActiveRoleUser } from '@/hooks/use-role'
-import { taskPriorityMeta } from '@/utils/status'
 import { getEffectiveReturnStatus } from '@/lib/return-lifecycle'
-import { formatDate } from '@/utils/format'
-import type { TaxReturn } from '@/types'
-import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
+import { useActiveRoleUser } from '@/hooks/use-role'
+import type { WorkItemFilters } from '@/types'
 
-const DUE_SOON_WINDOW_DAYS = 45
+const PRIORITY_COUNT = 6
 
-const returnColumns: LegacyColumnDef<TaxReturn, unknown>[] = [
-  {
-    accessorKey: 'clientId',
-    header: 'Client',
-    cell: ({ getValue }) => {
-      const client = getClientById(getValue<string>())
-      return <span className="text-foreground font-medium">{client?.name}</span>
-    },
-  },
-  {
-    accessorKey: 'formType',
-    header: 'Form',
-    cell: ({ getValue }) => <span className="text-foreground-secondary">{getValue<string>()}</span>,
-  },
-  {
-    accessorKey: 'status',
-    header: 'Stage',
-    cell: ({ row }) => <StageBadge stage={getEffectiveReturnStatus(row.original).stage} />,
-  },
-  {
-    accessorKey: 'progress',
-    header: 'Progress',
-    cell: ({ getValue }) => (
-      <div className="flex items-center gap-2">
-        <Progress value={getValue<number>()} className="h-1.5 w-20" />
-        <span className="text-foreground-tertiary w-8 text-xs tabular-nums">{getValue<number>()}%</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'dueDate',
-    header: 'Due',
-    cell: ({ getValue }) => (
-      <span className="text-foreground-secondary tabular-nums">{formatDate(getValue<string>())}</span>
-    ),
-  },
-  {
-    accessorKey: 'aiFlagCount',
-    header: 'AI',
-    cell: ({ getValue }) =>
-      getValue<number>() > 0 ? <AIBadge label={`${getValue<number>()} flags`} /> : null,
-  },
-]
+const emptyFilters: WorkItemFilters = { search: '', category: null, priority: null, ownerId: null, dueWithin: null }
 
-/** The firm-facing home dashboard for Tax Preparers — active returns, work
- * needing attention, AI flags, and assigned tasks. */
+function greeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
+
+/** The primary CPA-facing dashboard — a work queue, not a report. Answers
+ * "what should I work on right now" within a few seconds. */
 export function PreparerDashboard() {
   const navigate = useNavigate()
   const currentUser = useActiveRoleUser()
-  const firstName = currentUser.name.split(' ')[0]
+  const [filters, setFilters] = useState<WorkItemFilters>(emptyFilters)
+  const [openCount, setOpenCount] = useState(10)
 
-  const activeReturns = useMemo(
-    () => taxReturns.filter((r) => !['filed', 'accepted', 'rejected'].includes(r.status)),
-    []
-  )
-  const dueSoon = useMemo(
-    () =>
-      taxReturns.filter((r) => {
-        const daysUntilDue = differenceInCalendarDays(parseISO(r.dueDate), new Date())
-        return daysUntilDue >= 0 && daysUntilDue <= DUE_SOON_WINDOW_DAYS
-      }),
-    []
-  )
-  const openFlags = useMemo(() => aiSuggestions.filter((s) => !s.resolved), [])
-  const unreadMessages = useMemo(() => messageThreads.reduce((sum, t) => sum + t.unreadCount, 0), [])
-  const myTasks = useMemo(
-    () => tasks.filter((t) => t.assigneeId === currentUser.id && t.status !== 'done').slice(0, 5),
+  const myItems = useMemo(() => getWorkItemsForUser(currentUser.id), [currentUser.id])
+  const priorityItems = myItems.slice(0, PRIORITY_COUNT)
+
+  const filteredItems = useMemo(() => {
+    return myItems.filter((item) => {
+      if (filters.category && item.category !== filters.category) return false
+      if (filters.priority && item.priority !== filters.priority) return false
+      if (filters.ownerId && item.ownerId !== filters.ownerId) return false
+      if (filters.dueWithin) {
+        const bucket = getDueBucket(item.dueDate)
+        if (filters.dueWithin === 'overdue' && bucket !== 'overdue') return false
+        if (filters.dueWithin === 'today' && bucket !== 'today') return false
+        if (filters.dueWithin === 'week' && !['today', 'tomorrow', 'week'].includes(bucket)) return false
+      }
+      if (filters.search) {
+        const haystack = `${item.clientName ?? ''} ${item.title} ${item.returnLabel ?? ''}`.toLowerCase()
+        if (!haystack.includes(filters.search.toLowerCase())) return false
+      }
+      return true
+    })
+  }, [myItems, filters])
+
+  const myReturns = useMemo(
+    () => taxReturns.filter((r) => r.assignedPreparerId === currentUser.id || r.assignedReviewerId === currentUser.id),
     [currentUser.id]
   )
-  const needsAttention = useMemo(
-    () => taxReturns.filter((r) => r.status === 'in_review' || r.status === 'needs_client_info'),
-    []
-  )
-
-  const timelineItems = activityFeed.slice(0, 6).map((item) => {
-    const actor = getUserById(item.actorId)
-    return {
-      id: item.id,
-      actorName: actor?.name ?? 'Someone',
-      actorAvatarUrl: actor?.avatarUrl,
-      action: `${item.verb} ${item.targetLabel}`,
-      timestamp: item.createdAt,
-    }
-  })
+  const stats = useMemo(() => {
+    const active = myReturns.filter((r) => !['filed', 'accepted', 'rejected'].includes(r.status))
+    const waitingOnClient = active.filter((r) => getEffectiveReturnStatus(r).condition === 'waiting_on_client')
+    const awaitingReview = active.filter((r) => getEffectiveReturnStatus(r).stage === 'cpa_review')
+    const dueToday = myItems.filter((i) => getDueBucket(i.dueDate) === 'today')
+    return [
+      { label: 'active returns', value: active.length },
+      { label: 'need attention', value: myItems.length },
+      { label: 'waiting on clients', value: waitingOnClient.length },
+      { label: 'awaiting review', value: awaitingReview.length },
+      { label: 'due today', value: dueToday.length },
+    ]
+  }, [myReturns, myItems])
 
   return (
     <PageContainer>
       <PageHeader
-        title={`Welcome back, ${firstName}`}
-        description="Here’s what’s happening across your firm today."
+        title={`${greeting()}, ${currentUser.name.split(' ')[0]}`}
+        description={
+          myItems.length === 0
+            ? "You're all caught up — nothing needs your attention right now."
+            : `${myItems.length} item${myItems.length === 1 ? '' : 's'} need${myItems.length === 1 ? 's' : ''} your attention today.`
+        }
+        actions={
+          <Button size="sm" className="gap-1.5" onClick={() => toast('Task creation isn’t wired up yet.')}>
+            <Plus className="size-4" aria-hidden="true" />
+            New task
+          </Button>
+        }
       />
 
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
-      >
-        <MetricCard label="Active returns" value={String(activeReturns.length)} icon={FileText} />
-        <MetricCard
-          label={`Due within ${DUE_SOON_WINDOW_DAYS} days`}
-          value={String(dueSoon.length)}
-          icon={Clock}
-        />
-        <MetricCard label="Open AI flags" value={String(openFlags.length)} icon={Sparkles} />
-        <MetricCard label="Unread messages" value={String(unreadMessages)} icon={MessageSquare} />
-      </motion.div>
+      <WorkloadSummary stats={stats} />
 
-      <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-        <div className="flex flex-col gap-4 xl:col-span-2">
-          <SectionHeader
-            title="Returns needing attention"
-            description="In review or waiting on the client — click a row to open the traceability review"
+      <div className="flex flex-col gap-4">
+        <SectionHeader title="Needs your attention" description="Highest-priority work, ranked automatically" />
+        {priorityItems.length === 0 ? (
+          <EmptyState
+            icon={CheckCircle2}
+            title="You're all caught up"
+            description="No returns currently require your attention."
           />
-          <DataGrid
-            columns={returnColumns}
-            data={needsAttention}
-            pageSize={5}
-            onRowClick={(row) => void navigate({ to: '/returns/$returnId', params: { returnId: row.id } })}
-          />
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <SectionHeader title="Recent activity" />
-          <div className="bg-surface-raised border-border rounded-xl border p-4">
-            <Timeline items={timelineItems} />
-          </div>
-        </div>
+        ) : (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3"
+          >
+            {priorityItems.map((item) => (
+              <PriorityWorkCard key={item.id} item={item} onOpen={() => void navigate({ to: item.ctaHref })} />
+            ))}
+          </motion.div>
+        )}
       </div>
 
       <div className="flex flex-col gap-4">
-        <SectionHeader
-          title="My tasks"
-          description={`${myTasks.length} open task${myTasks.length === 1 ? '' : 's'} assigned to you`}
-          actions={<CheckSquare className="text-foreground-tertiary size-4" aria-hidden="true" />}
+        <SectionHeader title="Work queue" description="Everything assigned to you" />
+        <WorkItemFiltersBar
+          filters={filters}
+          onChange={(key, value) => setFilters((f) => ({ ...f, [key]: value }))}
+          onApplyPreset={(preset) => setFilters((f) => ({ ...f, ...preset }))}
+          onClearAll={() => setFilters(emptyFilters)}
+          owners={[currentUser]}
         />
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="flex flex-col gap-2"
-        >
-          {myTasks.map((task) => (
-            <motion.div
-              key={task.id}
-              variants={staggerItem}
-              className="bg-surface-raised border-border flex items-center justify-between gap-4 rounded-xl border px-4 py-3"
-            >
-              <div className="min-w-0">
-                <p className="text-foreground truncate text-sm font-medium">{task.title}</p>
-                {task.dueDate && (
-                  <p className="text-foreground-tertiary mt-0.5 text-xs">Due {formatDate(task.dueDate)}</p>
-                )}
-              </div>
-              <StatusBadge {...taskPriorityMeta[task.priority]} />
-            </motion.div>
-          ))}
-        </motion.div>
+        <WorkQueueTable items={filteredItems.slice(0, openCount)} />
+        {filteredItems.length > openCount && (
+          <Button variant="outline" size="sm" className="w-fit" onClick={() => setOpenCount((c) => c + 20)}>
+            Show more
+          </Button>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <SectionHeader title="Upcoming deadlines" />
+        <DeadlinesStrip items={myItems} />
       </div>
     </PageContainer>
   )

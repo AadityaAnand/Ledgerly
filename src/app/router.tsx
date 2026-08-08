@@ -1,6 +1,7 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
 import { AppShell } from '@/components/layout/app-shell'
 import {
+  AffordanceDemoPage,
   AIReviewPage,
   ClientsPage,
   DashboardPage,
@@ -111,6 +112,12 @@ const staffRoute = createRoute({
   component: StaffPage,
 })
 
+const affordanceDemoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/design-system',
+  component: AffordanceDemoPage,
+})
+
 const routeTree = rootRoute.addChildren([
   dashboardRoute,
   returnsRoute,
@@ -127,6 +134,7 @@ const routeTree = rootRoute.addChildren([
   workspaceRoute,
   reviewQueueRoute,
   staffRoute,
+  affordanceDemoRoute,
 ])
 
 export const router = createRouter({
