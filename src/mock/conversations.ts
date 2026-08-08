@@ -140,3 +140,11 @@ export const conversations: Conversation[] = [
 export function getConversationById(id: string): Conversation | undefined {
   return conversations.find((c) => c.id === id)
 }
+
+export function getConversationsByReturnId(returnId: string): Conversation[] {
+  return conversations.filter((c) => c.returnId === returnId)
+}
+
+export function getConversationsByClientId(clientId: string): Conversation[] {
+  return conversations.filter((c) => c.clientId === clientId)
+}

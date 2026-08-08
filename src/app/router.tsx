@@ -7,6 +7,7 @@ import {
   DocumentsPage,
   GetStartedPage,
   MessagesPage,
+  WorkspacePage,
   ReportsPage,
   ReturnReviewPage,
   ReturnsPage,
@@ -90,6 +91,12 @@ const getStartedRoute = createRoute({
   component: GetStartedPage,
 })
 
+const workspaceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/workspace/$type/$id',
+  component: WorkspacePage,
+})
+
 const routeTree = rootRoute.addChildren([
   dashboardRoute,
   returnsRoute,
@@ -103,6 +110,7 @@ const routeTree = rootRoute.addChildren([
   reportsRoute,
   settingsRoute,
   getStartedRoute,
+  workspaceRoute,
 ])
 
 export const router = createRouter({

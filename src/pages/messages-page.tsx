@@ -6,7 +6,7 @@ import { fadeIn } from '@/lib/animations'
 import { getClientById } from '@/mock/clients'
 import { fetchAllConversationMessages, fetchConversations } from '@/services/collaboration.service'
 import { useCollaborationStore } from '@/store/collaboration-store'
-import { useBreadcrumbStore } from '@/store/breadcrumb-store'
+import { useNavigationStore } from '@/store/navigation-store'
 import { ConversationListPanel } from '@/features/collaboration/components/conversation-list-panel'
 import { MessageThreadPanel } from '@/features/collaboration/components/message-thread-panel'
 import { ContextInspectorPanel } from '@/features/collaboration/components/context-inspector-panel'
@@ -24,7 +24,7 @@ export function MessagesPage() {
   const setLoading = useCollaborationStore((s) => s.setLoading)
   const selectConversation = useCollaborationStore((s) => s.selectConversation)
 
-  const setTrailingLabel = useBreadcrumbStore((s) => s.setTrailingLabel)
+  const visit = useNavigationStore((s) => s.visit)
 
   useEffect(() => {
     setLoading(true)
@@ -58,9 +58,22 @@ export function MessagesPage() {
 
   useEffect(() => {
     if (!selectedConversation || !client) return
-    setTrailingLabel(`${client.name} — ${selectedConversation.title}`)
-    return () => setTrailingLabel(null)
-  }, [selectedConversation, client, setTrailingLabel])
+    visit(
+      {
+        type: 'conversation',
+        id: selectedConversation.id,
+        label: `${client.name} — ${selectedConversation.title}`,
+        href: `/messages/${selectedConversation.id}`,
+      },
+      {
+        returnId: selectedConversation.returnId,
+        clientId: selectedConversation.clientId,
+        status: selectedConversation.category,
+      }
+    )
+    // visit is a stable zustand action reference; only re-run when the conversation itself changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversation?.id, client?.id])
 
   const handleSelect = (id: string) => {
     void navigate({ to: '/messages/$conversationId', params: { conversationId: id } })

@@ -135,3 +135,11 @@ export function getTasksByAssigneeId(assigneeId: string): Task[] {
 export function getTaskById(id: string): Task | undefined {
   return tasks.find((task) => task.id === id)
 }
+
+export function getTasksByReturnId(returnId: string): Task[] {
+  return tasks.filter((task) => task.returnId === returnId)
+}
+
+export function getTasksByClientId(clientId: string): Task[] {
+  return tasks.filter((task) => task.clientId === clientId)
+}

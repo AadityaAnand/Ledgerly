@@ -36,8 +36,12 @@ export function InspectorPanel({
           {onClose && <IconButton label="Close panel" icon={<X className="size-4" />} onClick={onClose} />}
         </div>
       </div>
-      <ScrollArea className="min-h-0 flex-1">
-        <div className="p-4">{children}</div>
+      <ScrollArea className="min-h-0 min-w-0 flex-1">
+        {/* Radix's ScrollArea viewport wraps children in a `display: table`
+         * element for size measurement, which makes descendants shrink-to-fit
+         * and defeats flex truncation. `w-0 min-w-full` forces this wrapper
+         * back to a definite width (the viewport's own) so `truncate` works. */}
+        <div className="w-0 min-w-full p-4">{children}</div>
       </ScrollArea>
     </div>
   )

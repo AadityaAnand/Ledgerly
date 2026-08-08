@@ -79,3 +79,7 @@ export const aiSuggestions: AISuggestion[] = [
 export function getAISuggestionsByReturnId(returnId: string): AISuggestion[] {
   return aiSuggestions.filter((s) => s.returnId === returnId)
 }
+
+export function getAISuggestionById(id: string): AISuggestion | undefined {
+  return aiSuggestions.find((s) => s.id === id)
+}

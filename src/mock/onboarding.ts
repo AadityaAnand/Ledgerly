@@ -1,4 +1,4 @@
-import type { ClientOnboardingProfile } from '@/types'
+import type { ClientOnboardingProfile, QuestionnaireQuestion } from '@/types'
 
 export const onboardingProfiles: ClientOnboardingProfile[] = [
   {
@@ -121,4 +121,18 @@ export const onboardingProfiles: ClientOnboardingProfile[] = [
 
 export function getOnboardingProfileByClientId(clientId: string): ClientOnboardingProfile | undefined {
   return onboardingProfiles.find((p) => p.clientId === clientId)
+}
+
+export function getOnboardingProfileByReturnId(returnId: string): ClientOnboardingProfile | undefined {
+  return onboardingProfiles.find((p) => p.returnId === returnId)
+}
+
+export function getQuestionById(
+  id: string
+): { question: QuestionnaireQuestion; profile: ClientOnboardingProfile } | undefined {
+  for (const profile of onboardingProfiles) {
+    const question = profile.questionnaireQuestions.find((q) => q.id === id)
+    if (question) return { question, profile }
+  }
+  return undefined
 }

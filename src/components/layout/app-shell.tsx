@@ -1,6 +1,7 @@
 import { Outlet } from '@tanstack/react-router'
 import { Sidebar } from '@/components/layout/sidebar'
 import { TopNav } from '@/components/layout/top-nav'
+import { ContextBar } from '@/components/layout/context-bar'
 import { Footer } from '@/components/layout/footer'
 import { CommandPalette } from '@/components/shared/command-palette'
 
@@ -15,6 +16,7 @@ export function AppShell() {
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopNav />
+        <ContextBar />
         <main id="main-content" tabIndex={-1} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           <div className="flex min-h-0 flex-1 flex-col">
             <Outlet />

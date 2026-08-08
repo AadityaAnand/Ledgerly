@@ -1,4 +1,5 @@
 import type {
+  AISuggestionSeverity,
   ApprovalStatus,
   ConfidenceLevel,
   ConversationCategory,
@@ -97,6 +98,12 @@ export const approvalStatusMeta: Record<ApprovalStatus, StatusMeta> = {
   pending: { label: 'Pending approval', tone: 'warning' },
   approved: { label: 'Approved', tone: 'success' },
   rejected: { label: 'Rejected', tone: 'danger' },
+}
+
+export const aiSeverityMeta: Record<AISuggestionSeverity, StatusMeta> = {
+  info: { label: 'Info', tone: 'ai' },
+  warning: { label: 'Warning', tone: 'warning' },
+  critical: { label: 'Critical', tone: 'danger' },
 }
 
 /** ConversationPriority shares the exact same union as TaskPriority — reuse

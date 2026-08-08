@@ -1,55 +1,75 @@
+import { useMemo } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { PageContainer } from '@/components/layout/page-container'
 import { PageHeader } from '@/components/layout/page-header'
 import { AIBadge } from '@/components/shared/ai-badge'
 import { EmptyState } from '@/components/shared/empty-state'
-import { InfoCard } from '@/components/shared/info-card'
-import { Button } from '@/components/ui/button'
+import { StatusBadge } from '@/components/shared/status-badge'
 import { getClientById } from '@/mock/clients'
+import { getReturnById } from '@/mock/returns'
 import { aiSuggestions } from '@/mock/ai-suggestions'
-
-const FEATURED_RETURN_ID = 'ret_1'
-const FEATURED_CLIENT_ID = 'cli_1'
+import { useNavigationStore } from '@/store/navigation-store'
+import { staggerContainer, staggerItem } from '@/lib/animations'
+import { aiSeverityMeta } from '@/utils/status'
+import { formatRelativeTime } from '@/utils/format'
 
 export function AIReviewPage() {
   const navigate = useNavigate()
-  const client = getClientById(FEATURED_CLIENT_ID)
-  const openFlagCount = aiSuggestions.filter((s) => s.returnId === FEATURED_RETURN_ID && !s.resolved).length
+  const resetTrail = useNavigationStore((s) => s.resetTrail)
+
+  const openFlags = useMemo(
+    () => [...aiSuggestions].filter((s) => !s.resolved).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)),
+    []
+  )
 
   return (
     <PageContainer>
       <PageHeader
         title="AI Review"
-        description="Discrepancies, missed deductions, and compliance flags — surfaced automatically."
+        description="Discrepancies, missed deductions, and compliance flags — surfaced automatically across every return."
         actions={<AIBadge label="Powered by AI" />}
       />
 
-      {client && (
-        <InfoCard
-          icon={Sparkles}
-          title={`${client.name} has ${openFlagCount} unresolved AI flag${openFlagCount === 1 ? '' : 's'}`}
-          description="Trace every field back to its source document, review AI confidence, and approve or correct values line by line."
-          action={
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={() =>
-                void navigate({ to: '/returns/$returnId', params: { returnId: FEATURED_RETURN_ID } })
-              }
-            >
-              Review now
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
-          }
-        />
+      {openFlags.length === 0 ? (
+        <EmptyState icon={Sparkles} title="Nothing flagged" description="Every return is clean right now." />
+      ) : (
+        <motion.ul variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col gap-2">
+          {openFlags.map((suggestion) => {
+            const taxReturn = getReturnById(suggestion.returnId)
+            const client = taxReturn ? getClientById(taxReturn.clientId) : undefined
+            return (
+              <motion.li key={suggestion.id} variants={staggerItem}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetTrail()
+                    void navigate({ to: '/workspace/$type/$id', params: { type: 'ai_review', id: suggestion.id } })
+                  }}
+                  className="border-border bg-surface-raised hover:bg-surface-hover focus-visible:-outline-offset-2 flex w-full items-start gap-4 rounded-xl border p-4 text-left transition-colors"
+                >
+                  <div className="bg-ai-subtle text-ai-subtle-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                    <Sparkles className="size-4" aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-foreground truncate text-sm font-medium">{suggestion.title}</p>
+                      <StatusBadge {...aiSeverityMeta[suggestion.severity]} />
+                    </div>
+                    <p className="text-foreground-secondary mt-1 line-clamp-2 text-sm leading-relaxed">
+                      {suggestion.description}
+                    </p>
+                    <p className="text-foreground-tertiary mt-2 text-xs">
+                      {client?.name} · {taxReturn?.taxYear} {taxReturn?.formType} · {formatRelativeTime(suggestion.createdAt)}
+                    </p>
+                  </div>
+                </button>
+              </motion.li>
+            )
+          })}
+        </motion.ul>
       )}
-
-      <EmptyState
-        icon={Sparkles}
-        title="This view is coming together"
-        description="A unified queue of AI-flagged issues across every return lands in the next build."
-      />
     </PageContainer>
   )
 }

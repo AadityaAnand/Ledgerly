@@ -7,6 +7,7 @@ import { WorkspaceSwitcher } from '@/components/layout/workspace-switcher'
 import { UserMenu } from '@/components/layout/user-menu'
 import { navItems } from '@/components/layout/nav-config'
 import { useUIStore } from '@/store/ui-store'
+import { useNavigationStore } from '@/store/navigation-store'
 import { transitions } from '@/lib/animations'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +20,7 @@ export function Sidebar() {
   const collapsed = useUIStore((s) => s.sidebarCollapsed)
   const toggleSidebar = useUIStore((s) => s.toggleSidebar)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const resetTrail = useNavigationStore((s) => s.resetTrail)
 
   return (
     <motion.aside
@@ -44,6 +46,7 @@ export function Sidebar() {
           const link = (
             <Link
               to={item.href}
+              onClick={resetTrail}
               className={cn(
                 'group flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
                 collapsed && 'justify-center px-0 py-2.5',

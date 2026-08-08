@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { NotificationBell } from '@/components/layout/notification-bell'
+import { RecentHistoryPopover } from '@/components/layout/recent-history-popover'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
 import { UserMenu } from '@/components/layout/user-menu'
 import { quickActions } from '@/components/layout/nav-config'
@@ -60,6 +61,7 @@ export function TopNav() {
 
         <div className="bg-border mx-1 h-5 w-px" />
 
+        <RecentHistoryPopover />
         <NotificationBell />
         <ThemeToggle />
 

@@ -10,7 +10,7 @@ import { getClientById } from '@/mock/clients'
 import { getReturnById } from '@/mock/returns'
 import { fetchFieldTraces } from '@/services/traceability.service'
 import { useTraceabilityStore } from '@/store/traceability-store'
-import { useBreadcrumbStore } from '@/store/breadcrumb-store'
+import { useNavigationStore } from '@/store/navigation-store'
 import { ReviewWorkspaceHeader } from '@/features/return-review/components/review-workspace-header'
 import { ReviewWorkspaceSkeleton } from '@/features/return-review/components/review-workspace-skeleton'
 import { FieldListPanel } from '@/features/return-review/components/field-list-panel'
@@ -30,13 +30,17 @@ export function ReturnReviewPage() {
   const initialize = useTraceabilityStore((s) => s.initialize)
   const setLoading = useTraceabilityStore((s) => s.setLoading)
 
-  const setTrailingLabel = useBreadcrumbStore((s) => s.setTrailingLabel)
+  const visit = useNavigationStore((s) => s.visit)
 
   useEffect(() => {
-    if (!client) return
-    setTrailingLabel(client.name)
-    return () => setTrailingLabel(null)
-  }, [client, setTrailingLabel])
+    if (!client || !taxReturn) return
+    visit(
+      { type: 'return', id: taxReturn.id, label: client.name, href: `/returns/${taxReturn.id}` },
+      { returnId: taxReturn.id, clientId: client.id, status: taxReturn.status }
+    )
+    // visit is a stable zustand action reference; only re-run when the return itself changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [taxReturn?.id, client?.id])
 
   useEffect(() => {
     if (!returnId) return
