@@ -7,6 +7,7 @@ import {
   FolderOpen,
   LayoutDashboard,
   MessageSquare,
+  Rocket,
   Settings,
   Sparkles,
   UploadCloud,
@@ -30,18 +31,21 @@ export interface NavItem {
 export const roleNavItems: Record<Role, NavItem[]> = {
   CLIENT: [
     { label: 'My Return', href: '/', icon: LayoutDashboard },
+    { label: 'Get Started', href: '/get-started', icon: Rocket },
     { label: 'Documents', href: '/documents', icon: FolderOpen },
     { label: 'Tasks', href: '/tasks', icon: CheckSquare },
     { label: 'Messages', href: '/messages', icon: MessageSquare },
   ],
   BUSINESS_OWNER: [
     { label: 'Business Return', href: '/', icon: LayoutDashboard },
+    { label: 'Get Started', href: '/get-started', icon: Rocket },
     { label: 'Documents', href: '/documents', icon: FolderOpen },
     { label: 'Tasks', href: '/tasks', icon: CheckSquare },
     { label: 'Messages', href: '/messages', icon: MessageSquare },
   ],
   PREPARER: [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { label: 'Get Started', href: '/get-started', icon: Rocket },
     { label: 'Returns', href: '/returns', icon: FileText },
     { label: 'Clients', href: '/clients', icon: Users },
     { label: 'Documents', href: '/documents', icon: FolderOpen },
@@ -51,6 +55,7 @@ export const roleNavItems: Record<Role, NavItem[]> = {
   ],
   REVIEWER: [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { label: 'Get Started', href: '/get-started', icon: Rocket },
     { label: 'Review Queue', href: '/review-queue', icon: ClipboardCheck },
     { label: 'Returns', href: '/returns', icon: FileText },
     { label: 'AI Review', href: '/ai-review', icon: Sparkles },
@@ -58,6 +63,7 @@ export const roleNavItems: Record<Role, NavItem[]> = {
   ],
   ADMIN: [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { label: 'Get Started', href: '/get-started', icon: Rocket },
     { label: 'Clients', href: '/clients', icon: Users },
     { label: 'Returns', href: '/returns', icon: FileText },
     { label: 'Staff', href: '/staff', icon: UserCog },
@@ -66,6 +72,7 @@ export const roleNavItems: Record<Role, NavItem[]> = {
   ],
   SEASONAL_STAFF: [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { label: 'Get Started', href: '/get-started', icon: Rocket },
     { label: 'Assigned Returns', href: '/returns', icon: FileText },
     { label: 'Tasks', href: '/tasks', icon: CheckSquare },
     { label: 'Documents', href: '/documents', icon: FolderOpen },
