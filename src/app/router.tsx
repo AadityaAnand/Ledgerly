@@ -10,6 +10,10 @@ import {
   MessagesPage,
   WorkspacePage,
   ReportsPage,
+  ReturnAIFindingsPage,
+  ReturnDocumentsPage,
+  ReturnIssuesPage,
+  ReturnOverviewPage,
   ReturnReviewPage,
   ReturnsPage,
   ReviewQueuePage,
@@ -38,6 +42,30 @@ const returnReviewRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/returns/$returnId',
   component: ReturnReviewPage,
+})
+
+const returnOverviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/returns/$returnId/overview',
+  component: ReturnOverviewPage,
+})
+
+const returnDocumentsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/returns/$returnId/documents',
+  component: ReturnDocumentsPage,
+})
+
+const returnIssuesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/returns/$returnId/issues',
+  component: ReturnIssuesPage,
+})
+
+const returnAIFindingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/returns/$returnId/ai-findings',
+  component: ReturnAIFindingsPage,
 })
 
 const documentsRoute = createRoute({
@@ -121,6 +149,10 @@ const affordanceDemoRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   dashboardRoute,
   returnsRoute,
+  returnOverviewRoute,
+  returnDocumentsRoute,
+  returnIssuesRoute,
+  returnAIFindingsRoute,
   returnReviewRoute,
   documentsRoute,
   tasksRoute,

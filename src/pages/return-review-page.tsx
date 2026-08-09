@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useParams } from '@tanstack/react-router'
+import { useParams, useSearch } from '@tanstack/react-router'
 import { FileQuestion } from 'lucide-react'
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
@@ -16,9 +16,13 @@ import { ReviewWorkspaceSkeleton } from '@/features/return-review/components/rev
 import { FieldListPanel } from '@/features/return-review/components/field-list-panel'
 import { DocumentViewerPanel } from '@/features/return-review/components/document-viewer-panel'
 import { AIInspectorPanel } from '@/features/return-review/components/ai-inspector-panel'
+import { ReturnWorkspaceNav } from '@/features/return-workspace/components/return-workspace-nav'
+import { getReturnIssues, getReturnAIFindings } from '@/features/return-workspace/lib/return-workspace-data'
+import type { TraceCategory } from '@/types'
 
 export function ReturnReviewPage() {
   const { returnId } = useParams({ strict: false }) as { returnId?: string }
+  const search = useSearch({ strict: false }) as { field?: string; category?: string }
   const taxReturn = returnId ? getReturnById(returnId) : undefined
   const client = taxReturn ? getClientById(taxReturn.clientId) : undefined
 
@@ -54,6 +58,18 @@ export function ReturnReviewPage() {
     }
   }, [returnId, initialize, setLoading])
 
+  // Deep link support: `?field=` selects a specific field on arrival (from
+  // Return Search, the Overview, or the Issues/AI Findings views).
+  useEffect(() => {
+    if (search.field && traces.some((t) => t.id === search.field)) {
+      selectField(search.field)
+    }
+    // Only re-run when the target field or dataset identity changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.field, traces.length])
+
+  const focusCategory = (search.category as TraceCategory | undefined) ?? traces.find((t) => t.id === search.field)?.category ?? null
+
   if (!taxReturn || !client) {
     return (
       <div className="flex h-full flex-col items-center justify-center">
@@ -69,6 +85,11 @@ export function ReturnReviewPage() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="flex h-full flex-col">
+        <ReturnWorkspaceNav
+          returnId={taxReturn.id}
+          issuesCount={getReturnIssues(taxReturn.id).length}
+          aiFindingsCount={getReturnAIFindings(taxReturn.id).length}
+        />
         <ReviewWorkspaceHeader client={client} taxReturn={taxReturn} />
         <div className="min-h-0 flex-1">
           <AnimatePresence mode="wait">
@@ -109,6 +130,7 @@ export function ReturnReviewPage() {
                         selectedFieldId={selectedFieldId}
                         onSelect={selectField}
                         onHoverChange={hoverField}
+                        focusCategory={focusCategory}
                       />
                     </ScrollArea>
                   </ResizablePanel>

@@ -65,7 +65,9 @@ export const verificationStatusMeta: Record<VerificationStatus, StatusMeta> = {
 
 export const traceCategoryLabels: Record<TraceCategory, string> = {
   income: 'Income',
+  business: 'Business',
   deductions: 'Deductions',
+  credits: 'Credits',
   payments_credits: 'Payments & Credits',
   tax_summary: 'Tax Summary',
 }

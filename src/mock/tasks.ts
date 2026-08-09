@@ -1,5 +1,6 @@
 import type { Task } from '@/types'
 import { generatedTasks } from './generated-work'
+import { generatedIssueTasks } from './complex-return'
 
 export const tasks: Task[] = [
   {
@@ -150,7 +151,7 @@ export const tasks: Task[] = [
   },
 ]
 
-tasks.push(...generatedTasks)
+tasks.push(...generatedTasks, ...generatedIssueTasks)
 
 export function getTasksByAssigneeId(assigneeId: string): Task[] {
   return tasks.filter((task) => task.assigneeId === assigneeId)

@@ -1,4 +1,5 @@
 import type { Document } from '@/types'
+import { generatedDocuments } from './complex-return'
 
 export const documents: Document[] = [
   {
@@ -182,6 +183,8 @@ export const documents: Document[] = [
     aiExtracted: true,
   },
 ]
+
+documents.push(...generatedDocuments)
 
 export function getDocumentsByClientId(clientId: string): Document[] {
   return documents.filter((doc) => doc.clientId === clientId)

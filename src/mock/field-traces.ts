@@ -1,4 +1,5 @@
 import type { ReviewHistoryEntry, TaxFieldTrace, TraceabilityTimelineEvent } from '@/types'
+import { generatedTraces } from './complex-return'
 
 const RETURN_ID = 'ret_1'
 const PREPARER_ID = 'usr_2' // Marcus Webb
@@ -823,6 +824,8 @@ export const taxFieldTraces: TaxFieldTrace[] = [
     ],
   },
 ]
+
+taxFieldTraces.push(...generatedTraces)
 
 export function getTraceById(id: string): TaxFieldTrace | undefined {
   return taxFieldTraces.find((trace) => trace.id === id)

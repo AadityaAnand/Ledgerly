@@ -1,6 +1,12 @@
 import type { ID } from './common'
 
-export type TraceCategory = 'income' | 'deductions' | 'payments_credits' | 'tax_summary'
+export type TraceCategory =
+  | 'income'
+  | 'business'
+  | 'deductions'
+  | 'credits'
+  | 'payments_credits'
+  | 'tax_summary'
 
 export type VerificationStatus =
   'verified' | 'needs_review' | 'flagged' | 'overridden' | 'rejected' | 'unverified'

@@ -1,9 +1,10 @@
 import { useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
-import { FileQuestion } from 'lucide-react'
+import { ArrowRight, FileQuestion, Sparkles } from 'lucide-react'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/shared/empty-state'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { UserAvatar } from '@/components/shared/user-avatar'
@@ -149,6 +150,19 @@ export function WorkspacePage() {
                           helperText="Read-only — set automatically when the document was classified."
                         />
                       </div>
+                    )}
+
+                    {summary.type === 'ai_review' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-fit gap-1.5"
+                        onClick={() => void navigate({ to: `/ai-review?finding=aif_sugg_${summary.id}` })}
+                      >
+                        <Sparkles className="size-3.5" aria-hidden="true" />
+                        Open in AI Review workspace
+                        <ArrowRight className="size-3.5" aria-hidden="true" />
+                      </Button>
                     )}
 
                     {summary.type === 'client' && bundle.client && (
