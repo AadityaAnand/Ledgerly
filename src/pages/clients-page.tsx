@@ -82,7 +82,7 @@ export function ClientsPage() {
         title="Clients"
         description="Every individual and business you prepare returns for."
         actions={
-          <Button size="sm" className="gap-1.5" onClick={() => toast('Adding a client isn’t wired up yet.')}>
+          <Button size="sm" className="gap-1.5" onClick={() => toast('Adding a client isn’t available yet.')}>
             <Plus className="size-4" aria-hidden="true" />
             Add client
           </Button>

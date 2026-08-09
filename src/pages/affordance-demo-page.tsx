@@ -66,7 +66,7 @@ export function AffordanceDemoPage() {
                   reasoning: 'Matched Box 1 and verified employer information.',
                 }}
                 onViewSource={() => toast('Opening W-2 • Page 1…')}
-                onEditFromAI={() => toast('Switching to manual edit isn’t wired up in this demo.')}
+                onEditFromAI={() => toast('Switching to manual edit isn’t available yet.')}
                 onMarkVerified={() => {
                   setIncomeVerified(true)
                   toast.success('Income marked as verified')

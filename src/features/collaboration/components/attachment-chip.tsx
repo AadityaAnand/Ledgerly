@@ -19,7 +19,7 @@ export function AttachmentChip({ attachment }: AttachmentChipProps) {
   return (
     <button
       type="button"
-      onClick={() => toast('Attachment preview isn’t wired up yet.')}
+      onClick={() => toast('Attachment preview isn’t available yet.')}
       className="border-border-subtle bg-surface-raised hover:bg-surface-hover focus-visible:-outline-offset-2 flex max-w-64 items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition-colors"
     >
       <span className="bg-primary-subtle text-primary-subtle-foreground flex size-8 shrink-0 items-center justify-center rounded-md">

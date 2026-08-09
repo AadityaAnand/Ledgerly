@@ -4,6 +4,7 @@ import type {
   BlockerSeverity,
   ConfidenceLevel,
   ConversationCategory,
+  DocumentCategory,
   DocumentRequestStatus,
   DocumentStatus,
   ReturnCondition,
@@ -52,6 +53,16 @@ export const documentStatusMeta: Record<DocumentStatus, StatusMeta> = {
   processing: { label: 'Processing', tone: 'ai' },
   verified: { label: 'Verified', tone: 'success' },
   flagged: { label: 'Flagged', tone: 'warning' },
+}
+
+export const documentCategoryLabels: Record<DocumentCategory, string> = {
+  w2: 'W-2',
+  '1099': '1099',
+  k1: 'K-1',
+  receipt: 'Receipt',
+  prior_return: 'Prior return',
+  bank_statement: 'Bank statement',
+  other: 'Other',
 }
 
 export const verificationStatusMeta: Record<VerificationStatus, StatusMeta> = {

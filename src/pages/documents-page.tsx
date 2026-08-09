@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { documents } from '@/mock/documents'
 import { getClientById } from '@/mock/clients'
 import { useNavigationStore } from '@/store/navigation-store'
-import { documentStatusMeta } from '@/utils/status'
+import { documentCategoryLabels, documentStatusMeta } from '@/utils/status'
 import { formatFileSize, formatRelativeTime } from '@/utils/format'
 import type { Document } from '@/types'
 import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
@@ -39,7 +39,9 @@ const columns: LegacyColumnDef<Document, unknown>[] = [
   {
     accessorKey: 'category',
     header: 'Category',
-    cell: ({ getValue }) => <span className="text-foreground-secondary uppercase">{getValue<string>()}</span>,
+    cell: ({ getValue }) => (
+      <span className="text-foreground-secondary">{documentCategoryLabels[getValue<Document['category']>()]}</span>
+    ),
   },
   {
     accessorKey: 'status',
@@ -75,7 +77,7 @@ export function DocumentsPage() {
         title="Documents"
         description="Every W-2, 1099, and statement your clients send — organized and AI-extracted."
         actions={
-          <Button size="sm" className="gap-1.5" onClick={() => toast('Document upload isn’t wired up yet.')}>
+          <Button size="sm" className="gap-1.5" onClick={() => toast('Document upload isn’t available yet.')}>
             <Upload className="size-4" aria-hidden="true" />
             Upload
           </Button>

@@ -1,8 +1,8 @@
 import type { ID } from './common'
 import type { ReviewHistoryEntry, TraceabilityTimelineEvent } from './traceability'
 
-/** What kind of thing the AI is flagging — mirrors the finding types called
- * out in the case study (mismatch, duplicate, missing document, etc). */
+/** What kind of thing the AI is flagging (mismatch, duplicate, missing
+ * document, etc). */
 export type AIFindingCategory =
   | 'extraction'
   | 'discrepancy'
@@ -55,10 +55,10 @@ export interface AIFindingRecommendation {
 }
 
 /**
- * The mocked "AI response" shape referenced in the case study. Every
- * finding — whether hand-authored or derived from `TaxFieldTrace` /
- * `AISuggestion` records — is normalized into this one structure so the
- * review workspace has a single, consistent contract to render against.
+ * The normalized AI response shape used across the app. Every finding —
+ * whether hand-authored or derived from `TaxFieldTrace` / `AISuggestion`
+ * records — is normalized into this one structure so the review workspace
+ * has a single, consistent contract to render against.
  */
 export interface AIFinding {
   id: ID

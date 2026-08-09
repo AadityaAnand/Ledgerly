@@ -35,10 +35,10 @@ const SEVERITY_FILTERS: (AIFindingSeverity | 'all')[] = ['all', 'critical', 'war
 /**
  * The dedicated AI Review workspace: a clean, filterable queue on the left,
  * full evidence/confidence/correction detail on the right — never a chat
- * interface. Every finding is a mocked AI response (see `mock/ai-findings.ts`),
- * normalized from three sources: hand-authored flagship examples, Challenge
- * 2/3's `AISuggestion` records, and Challenge 9's generated field-trace
- * findings, so the workspace never feels disconnected from the rest of the app.
+ * interface. Every finding is a normalized AI response (see
+ * `mock/ai-findings.ts`), combining hand-authored flagship examples,
+ * `AISuggestion` records, and generated field-trace findings, so the
+ * workspace never feels disconnected from the rest of the app.
  */
 export function AIReviewPage() {
   const search = useSearch({ strict: false }) as { finding?: string; returnId?: string }

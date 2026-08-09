@@ -51,7 +51,7 @@ export function CommandPalette() {
 
   function runQuickAction(label: string) {
     setOpen(false)
-    toast(label, { description: 'This is a foundation build — this action isn’t wired up yet.' })
+    toast(label, { description: 'This action isn’t available yet.' })
   }
 
   return (

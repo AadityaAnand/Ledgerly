@@ -22,7 +22,7 @@ import { useNavigationStore } from '@/store/navigation-store'
 import { RelationshipPanel } from '@/features/workspace/components/relationship-panel'
 import { workspaceTypeMeta } from '@/features/workspace/workspace-type-meta'
 import { formatDate, formatFileSize, formatRelativeTime } from '@/utils/format'
-import { taskPriorityMeta } from '@/utils/status'
+import { documentCategoryLabels, returnStatusMeta, taskPriorityMeta } from '@/utils/status'
 import type { WorkspaceObjectType } from '@/types'
 
 export function WorkspacePage() {
@@ -55,7 +55,7 @@ export function WorkspacePage() {
         <EmptyState
           icon={FileQuestion}
           title="Not found"
-          description="This item doesn’t exist in this preview build."
+          description="This item doesn’t exist."
         />
       </div>
     )
@@ -146,7 +146,7 @@ export function WorkspacePage() {
                       <div className="border-border-subtle rounded-xl border px-1">
                         <ReadOnlyField
                           label="Category"
-                          value={documentForDisplay.category.toUpperCase()}
+                          value={documentCategoryLabels[documentForDisplay.category]}
                           helperText="Read-only — set automatically when the document was classified."
                         />
                       </div>
@@ -181,7 +181,7 @@ export function WorkspacePage() {
                                 <span className="text-foreground">
                                   {r.taxYear} {r.formType}
                                 </span>
-                                <span className="text-foreground-tertiary text-xs">{r.status.replace(/_/g, ' ')}</span>
+                                <StatusBadge {...returnStatusMeta[r.status]} />
                               </button>
                             </li>
                           ))}

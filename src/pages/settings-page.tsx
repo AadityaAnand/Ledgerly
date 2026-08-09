@@ -9,8 +9,8 @@ export function SettingsPage() {
       <PageHeader title="Settings" description="Manage your profile, firm, team, and preferences." />
       <EmptyState
         icon={Settings}
-        title="This view is coming together"
-        description="Profile, team, billing, and workspace settings land in the next build."
+        title="Coming soon"
+        description="Profile, team, billing, and workspace settings are on the roadmap."
       />
     </PageContainer>
   )

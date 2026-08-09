@@ -57,7 +57,7 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
-          onSelect={() => toast('This is a foundation build — sign out isn’t wired up yet.')}
+          onSelect={() => toast('Sign out isn’t available right now.')}
         >
           <LogOut className="size-4" aria-hidden="true" />
           Log out

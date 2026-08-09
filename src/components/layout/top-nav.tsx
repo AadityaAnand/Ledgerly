@@ -48,7 +48,7 @@ export function TopNav() {
                 key={action.label}
                 onSelect={() =>
                   toast(action.label, {
-                    description: 'This is a foundation build — this action isn’t wired up yet.',
+                    description: 'This action isn’t available yet.',
                   })
                 }
               >

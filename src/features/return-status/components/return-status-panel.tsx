@@ -27,7 +27,7 @@ interface ReturnStatusPanelProps {
 
 /** The one Return Status experience — used by both clients and staff. The
  * data and lifecycle are identical either way; only how much detail is
- * exposed changes, based on the active Challenge 5 role. */
+ * exposed changes, based on the active role. */
 export function ReturnStatusPanel({ taxReturn }: ReturnStatusPanelProps) {
   const navigate = useNavigate()
   const role = useActiveRole()

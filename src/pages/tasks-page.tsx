@@ -78,7 +78,7 @@ export function TasksPage() {
         title="Tasks"
         description="What needs to happen next, across every client and return."
         actions={
-          <Button size="sm" className="gap-1.5" onClick={() => toast('Task creation isn’t wired up yet.')}>
+          <Button size="sm" className="gap-1.5" onClick={() => toast('Task creation isn’t available yet.')}>
             <Plus className="size-4" aria-hidden="true" />
             New task
           </Button>

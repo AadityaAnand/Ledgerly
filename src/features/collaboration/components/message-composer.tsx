@@ -89,7 +89,7 @@ export function MessageComposer({ onSend, draft, onDraftConsumed }: MessageCompo
             <IconButton
               label="Attach file"
               icon={<Paperclip className="size-4" />}
-              onClick={() => toast('Attachments aren’t wired up yet.')}
+              onClick={() => toast('Attachments aren’t available yet.')}
             />
           </div>
           <Button size="sm" className="h-8 gap-1.5" disabled={!body.trim()} onClick={handleSend}>

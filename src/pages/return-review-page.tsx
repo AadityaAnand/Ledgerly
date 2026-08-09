@@ -76,7 +76,7 @@ export function ReturnReviewPage() {
         <EmptyState
           icon={FileQuestion}
           title="Return not found"
-          description="This return doesn’t exist in this preview build."
+          description="This return doesn’t exist."
         />
       </div>
     )
@@ -116,7 +116,7 @@ export function ReturnReviewPage() {
                 <EmptyState
                   icon={FileQuestion}
                   title="No traceability available"
-                  description="This return doesn’t have field-level traceability data in this preview build."
+                  description="This return doesn’t have field-level traceability data yet."
                   className="h-full"
                 />
               </motion.div>

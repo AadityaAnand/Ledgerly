@@ -11,19 +11,18 @@ const RETURN_ID = 'ret_1'
 const PREPARER_ID = 'usr_2' // Marcus Webb
 
 /**
- * The mocked "AI response" catalog for the whole app. Three layers, all
- * normalized into the same `AIFinding` shape so the review workspace never
- * has to special-case where a finding came from:
+ * The AI finding catalog for the whole app. Three layers, all normalized
+ * into the same `AIFinding` shape so the review workspace never has to
+ * special-case where a finding came from:
  *
- * 1. Eight hand-authored flagship findings below — one per category called
- *    out in the case study, most of them wrapping *real* `TaxFieldTrace`
- *    records built in Challenge 1 (`k1_passthrough_income`, `rental_income`,
- *    `tax_due`, `student_loan_interest`, `medical_expenses`,
+ * 1. Eight hand-authored flagship findings below — one per category, most
+ *    of them wrapping *real* `TaxFieldTrace` records (`k1_passthrough_income`,
+ *    `rental_income`, `tax_due`, `student_loan_interest`, `medical_expenses`,
  *    `business_income`) rather than inventing parallel data.
- * 2. Every `AISuggestion` from Challenge 2/3 (`mock/ai-suggestions.ts`) —
- *    unchanged at the source, just reshaped for this richer view.
- * 3. The bulk AI findings Challenge 9 already derives from the large
- *    generated field-trace dataset — reused as-is for queue volume.
+ * 2. Every `AISuggestion` from `mock/ai-suggestions.ts` — unchanged at the
+ *    source, just reshaped for this richer view.
+ * 3. The bulk AI findings already derived from the large generated
+ *    field-trace dataset — reused as-is for queue volume.
  */
 
 const flagshipFindings: AIFinding[] = (() => {
@@ -319,8 +318,8 @@ const flagshipFindings: AIFinding[] = (() => {
   return findings
 })()
 
-/** Every `AISuggestion` from Challenge 2/3, reshaped into an `AIFinding` —
- * the source data isn't touched, just presented consistently. */
+/** Every `AISuggestion` on file, reshaped into an `AIFinding` — the source
+ * data isn't touched, just presented consistently. */
 const suggestionFindings: AIFinding[] = aiSuggestions.map((s) => {
   const taxReturn = getReturnById(s.returnId)
   const category: AIFindingCategory =
@@ -357,8 +356,8 @@ const suggestionFindings: AIFinding[] = aiSuggestions.map((s) => {
 })
 
 /** The bulk of the queue — every low-confidence / conflicting / suggested
- * finding Challenge 9 already derives from the large generated field-trace
- * dataset, reused as-is for volume rather than re-derived here. */
+ * finding already derived from the large generated field-trace dataset,
+ * reused as-is for volume rather than re-derived here. */
 const generatedFindings: AIFinding[] = getReturnAIFindings(RETURN_ID).map((f) => {
   const trace = getTraceById(f.id.replace(/^finding_(lowconf|conflict|suggest)_/, ''))
   const category: AIFindingCategory =

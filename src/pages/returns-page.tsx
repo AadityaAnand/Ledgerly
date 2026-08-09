@@ -44,7 +44,7 @@ export function ReturnsPage() {
         }
         actions={
           role !== 'SEASONAL_STAFF' ? (
-            <Button size="sm" className="gap-1.5" onClick={() => toast('Return creation isn’t wired up yet.')}>
+            <Button size="sm" className="gap-1.5" onClick={() => toast('Return creation isn’t available yet.')}>
               <Plus className="size-4" aria-hidden="true" />
               New return
             </Button>

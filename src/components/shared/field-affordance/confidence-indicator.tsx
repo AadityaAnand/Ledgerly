@@ -2,9 +2,9 @@ import { ConfidenceMeter } from '@/components/shared/confidence-meter'
 import { getConfidenceLevel } from '@/utils/status'
 import { cn } from '@/lib/utils'
 
-/** The radial confidence ring already built for Challenge 1 — reused
- * directly rather than rebuilt, aliased here so the field-affordance
- * system exposes it under the name this challenge asks for. */
+/** The radial confidence ring used across the traceability workspace —
+ * reused directly rather than rebuilt, aliased here so the field-affordance
+ * system exposes it under a name consistent with the rest of that system. */
 export { ConfidenceMeter as ConfidenceIndicator }
 
 const levelTextClass = {

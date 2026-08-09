@@ -25,7 +25,7 @@ export function ReviewQueuePage() {
 
   function handleAction(label: string, taxReturn: TaxReturn) {
     toast(`${label} — ${getClientById(taxReturn.clientId)?.name ?? 'return'}`, {
-      description: 'This is a foundation build — this action isn’t wired up yet.',
+      description: 'This action isn’t available yet.',
     })
   }
 
@@ -61,8 +61,14 @@ export function ReviewQueuePage() {
     {
       accessorKey: 'aiFlagCount',
       header: 'AI flags',
-      cell: ({ getValue }) =>
-        getValue<number>() > 0 ? <AIBadge label={`${getValue<number>()} flags`} /> : <span className="text-foreground-tertiary">—</span>,
+      cell: ({ getValue }) => {
+        const count = getValue<number>()
+        return count > 0 ? (
+          <AIBadge label={`${count} flag${count === 1 ? '' : 's'}`} />
+        ) : (
+          <span className="text-foreground-tertiary">—</span>
+        )
+      },
     },
     {
       accessorKey: 'dueDate',

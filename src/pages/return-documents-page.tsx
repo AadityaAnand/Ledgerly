@@ -15,21 +15,11 @@ import { getClientById } from '@/mock/clients'
 import { getReturnById } from '@/mock/returns'
 import { getDocumentsByReturnId } from '@/mock/documents'
 import { useNavigationStore } from '@/store/navigation-store'
-import { documentStatusMeta } from '@/utils/status'
+import { documentCategoryLabels, documentStatusMeta } from '@/utils/status'
 import { formatFileSize, formatRelativeTime } from '@/utils/format'
 import { cn } from '@/lib/utils'
 import type { Document, DocumentCategory, DocumentStatus } from '@/types'
 import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
-
-const CATEGORY_LABELS: Record<DocumentCategory, string> = {
-  w2: 'W-2',
-  '1099': '1099',
-  k1: 'K-1',
-  receipt: 'Receipt',
-  prior_return: 'Prior return',
-  bank_statement: 'Bank statement',
-  other: 'Other',
-}
 
 const STATUS_FILTERS: (DocumentStatus | 'all')[] = ['all', 'uploaded', 'processing', 'verified', 'flagged']
 
@@ -48,7 +38,7 @@ const columns: LegacyColumnDef<Document, unknown>[] = [
   {
     accessorKey: 'category',
     header: 'Type',
-    cell: ({ getValue }) => <span className="text-foreground-secondary">{CATEGORY_LABELS[getValue<DocumentCategory>()]}</span>,
+    cell: ({ getValue }) => <span className="text-foreground-secondary">{documentCategoryLabels[getValue<DocumentCategory>()]}</span>,
   },
   {
     accessorKey: 'status',
@@ -110,7 +100,7 @@ export function ReturnDocumentsPage() {
   if (!taxReturn || !client) {
     return (
       <div className="flex h-full flex-col items-center justify-center">
-        <EmptyState icon={FileQuestion} title="Return not found" description="This return doesn’t exist in this preview build." />
+        <EmptyState icon={FileQuestion} title="Return not found" description="This return doesn’t exist." />
       </div>
     )
   }
@@ -166,7 +156,7 @@ export function ReturnDocumentsPage() {
               <option value="all">All types</option>
               {categories.map((c) => (
                 <option key={c} value={c}>
-                  {CATEGORY_LABELS[c]}
+                  {documentCategoryLabels[c]}
                 </option>
               ))}
             </select>

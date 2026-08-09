@@ -67,7 +67,7 @@ export function DocumentRequestCard({ message }: DocumentRequestCardProps) {
               size="sm"
               variant="outline"
               className="h-7 flex-1 text-xs"
-              onClick={() => toast('Request preview isn’t wired up yet.')}
+              onClick={() => toast('Request preview isn’t available yet.')}
             >
               View Request
             </Button>

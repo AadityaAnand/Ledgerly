@@ -33,9 +33,9 @@ const cardClass = 'border-border bg-surface-raised rounded-xl border p-5'
 
 interface GetStartedPageProps {
   /** Which client's onboarding/return workspace to show. Defaults to the
-   * Challenge 3 demo client so the standalone `/get-started` route is
-   * unaffected — Challenge 5 passes the active workspace's own clientId so
-   * the same page serves the Client and Business Owner roles. */
+   * demo client so the standalone `/get-started` route is unaffected — the
+   * active workspace passes its own clientId so the same page serves the
+   * Client and Business Owner roles. */
   clientId?: string
 }
 
@@ -257,7 +257,7 @@ export function GetStartedPage({ clientId = 'cli_8' }: GetStartedPageProps) {
             <div className="mt-4">
               <QuestionnaireTeaser
                 questions={profile.questionnaireQuestions}
-                onContinue={() => toast('The full questionnaire isn’t wired up in this preview build.')}
+                onContinue={() => toast('The full questionnaire isn’t available yet.')}
               />
             </div>
           </div>

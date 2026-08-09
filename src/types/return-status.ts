@@ -45,7 +45,7 @@ export interface ReturnNextAction {
   ownerId: ID
   dueDate?: string
   ctaLabel: string
-  /** Where the CTA should go. A Ch4 workspace object (resolved via
+  /** Where the CTA should go. A workspace object (resolved via
    * `resolveWorkspaceHref`), or a plain route for client-safe destinations
    * that shouldn't expose an internal object (e.g. a task). */
   ctaType?: WorkspaceObjectType

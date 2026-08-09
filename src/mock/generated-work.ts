@@ -1,11 +1,11 @@
 import type { Client, ReturnStatus, TaskPriority, TaskStatus, TaxReturn, Task } from '@/types'
 
 /**
- * A larger, varied dataset so Challenge 7's work queue and prioritization
- * logic have enough volume to be genuinely demonstrable — 50+ returns and
- * 30+ tasks across many clients, stages, owners, and due dates. Generated
- * with a seeded PRNG so the data is realistic-looking but stable across
- * reloads, rather than hand-authoring dozens of near-identical records.
+ * A larger, varied dataset so the work queue and prioritization logic have
+ * enough volume to be genuinely demonstrable — 50+ returns and 30+ tasks
+ * across many clients, stages, owners, and due dates. Generated with a
+ * seeded PRNG so the data is realistic-looking but stable across reloads,
+ * rather than hand-authoring dozens of near-identical records.
  */
 function mulberry32(seed: number) {
   let s = seed

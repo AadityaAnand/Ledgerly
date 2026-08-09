@@ -45,7 +45,7 @@ export function HelpSupportPanel({ cpaName }: HelpSupportPanelProps) {
             size="sm"
             variant="ghost"
             className="mt-2 px-0 hover:bg-transparent"
-            onClick={() => toast('Help center isn’t wired up in this preview build.')}
+            onClick={() => toast('The help center isn’t available yet.')}
           >
             Browse articles
           </Button>

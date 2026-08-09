@@ -98,7 +98,7 @@ export function ReviewWorkspaceHeader({ client, taxReturn }: ReviewWorkspaceHead
             className="gap-1.5"
             onClick={() =>
               toast(`Approved — ${client.name}`, {
-                description: 'This is a foundation build — this action isn’t wired up yet.',
+                description: 'This action isn’t available yet.',
               })
             }
           >

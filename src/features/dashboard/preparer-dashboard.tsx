@@ -89,7 +89,7 @@ export function PreparerDashboard() {
             : `${myItems.length} item${myItems.length === 1 ? '' : 's'} need${myItems.length === 1 ? 's' : ''} your attention today.`
         }
         actions={
-          <Button size="sm" className="gap-1.5" onClick={() => toast('Task creation isn’t wired up yet.')}>
+          <Button size="sm" className="gap-1.5" onClick={() => toast('Task creation isn’t available yet.')}>
             <Plus className="size-4" aria-hidden="true" />
             New task
           </Button>

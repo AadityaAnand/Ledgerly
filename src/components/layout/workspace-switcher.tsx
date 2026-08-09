@@ -19,7 +19,8 @@ import type { Workspace } from '@/types'
 
 /** Doubles as the persistent, compact role/context indicator (always
  * visible, whatever it's set to) and the switcher that lets a user move
- * between their own workspaces or preview another role for the demo. */
+ * between their own workspaces or preview how Ledgerly looks for another
+ * role. */
 export function WorkspaceSwitcher({ collapsed = false }: { collapsed?: boolean }) {
   const navigate = useNavigate()
   const switchWorkspace = useWorkspaceStore((s) => s.switchWorkspace)
@@ -92,7 +93,7 @@ export function WorkspaceSwitcher({ collapsed = false }: { collapsed?: boolean }
           Preview other roles
         </DropdownMenuLabel>
         <p className="text-foreground-tertiary px-2 pb-1.5 text-xs leading-relaxed">
-          For this demo — see how Ledgerly looks for a different person and role.
+          See how Ledgerly looks for a different person and role.
         </p>
         {otherWorkspaces.map((workspace) => (
           <WorkspaceMenuItem

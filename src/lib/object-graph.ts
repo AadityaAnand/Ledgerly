@@ -40,8 +40,8 @@ export interface WorkspaceObjectSummary {
 
 /** Resolves the standalone generic workspace types (document, task, client,
  * ai_review, question). Return and conversation have their own dedicated,
- * richer pages (Ch1 traceability / Ch2 messages) and don't route through
- * here — see `resolveWorkspaceHref`. */
+ * richer pages (the traceability workspace / messages) and don't route
+ * through here — see `resolveWorkspaceHref`. */
 export function getWorkspaceObject(type: WorkspaceObjectType, id: string): WorkspaceObjectSummary | undefined {
   switch (type) {
     case 'document': {

@@ -6,7 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { getTracesByReturnId } from '@/mock/field-traces'
 import { getDocumentsByReturnId } from '@/mock/documents'
 import { getTasksByReturnId } from '@/mock/tasks'
-import { traceCategoryLabels, verificationStatusMeta, documentStatusMeta, taskStatusMeta } from '@/utils/status'
+import { traceCategoryLabels, verificationStatusMeta, documentCategoryLabels, documentStatusMeta, taskStatusMeta } from '@/utils/status'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 
 interface ReturnSearchProps {
@@ -87,7 +87,7 @@ export function ReturnSearch({ returnId }: ReturnSearchProps) {
                     <div className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate">{d.name}</span>
                       <span className="text-foreground-tertiary text-xs">
-                        {d.category.toUpperCase()} · {documentStatusMeta[d.status].label}
+                        {documentCategoryLabels[d.category]} · {documentStatusMeta[d.status].label}
                       </span>
                     </div>
                   </CommandItem>

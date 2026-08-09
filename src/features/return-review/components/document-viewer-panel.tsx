@@ -74,7 +74,7 @@ export function DocumentViewerPanel() {
                 size="sm"
                 variant="outline"
                 className="gap-1.5"
-                onClick={() => toast('Document requests aren’t wired up yet.')}
+                onClick={() => toast('Document requests aren’t available yet.')}
               >
                 <UploadCloud className="size-4" aria-hidden="true" />
                 Request from client

@@ -63,7 +63,7 @@ export function ReturnIssuesPage() {
   if (!taxReturn || !client) {
     return (
       <div className="flex h-full flex-col items-center justify-center">
-        <EmptyState icon={FileQuestion} title="Return not found" description="This return doesn’t exist in this preview build." />
+        <EmptyState icon={FileQuestion} title="Return not found" description="This return doesn’t exist." />
       </div>
     )
   }

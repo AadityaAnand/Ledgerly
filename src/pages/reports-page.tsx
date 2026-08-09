@@ -9,8 +9,8 @@ export function ReportsPage() {
       <PageHeader title="Reports" description="Firm performance, capacity, and revenue at a glance." />
       <EmptyState
         icon={BarChart3}
-        title="This view is coming together"
-        description="Firm-wide reporting and analytics land in the next build."
+        title="Coming soon"
+        description="Firm-wide reporting and analytics are on the roadmap."
       />
     </PageContainer>
   )

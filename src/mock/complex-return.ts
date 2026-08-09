@@ -1,10 +1,10 @@
 import type { Document, DocumentCategory, DocumentStatus, Task, TaskPriority, TaskStatus, TaxFieldTrace, TraceCategory, VerificationStatus } from '@/types'
 
 /**
- * Challenge 9's "complexity made navigable" dataset. Rather than inventing a
- * new client, this deliberately piles hundreds of additional generated
- * fields, documents, and tasks onto `ret_1` — Ledgerly's most fully-built
- * return — so the existing Return Review workspace has to prove it can
+ * A large-scale dataset for a genuinely complex return. Rather than
+ * inventing a new client, this deliberately piles hundreds of additional
+ * generated fields, documents, and tasks onto `ret_1` — Ledgerly's most
+ * fully-built return — so the Return Review workspace has to prove it can
  * stay navigable at real professional scale, not just look good with a
  * handful of curated rows. Seeded PRNG mirrors `generated-work.ts`: stable
  * across reloads, no hand-authored volume.
